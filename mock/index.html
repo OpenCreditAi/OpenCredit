@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Credit</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+  <header class="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-8">
+    <h1 class="text-4xl font-bold tracking-tight">Open Credit</h1>
+    <p class="mt-2 text-lg opacity-75">Review available project applications</p>
+  </header>
+  <main class="container mx-auto py-12">
+    <section>
+      <div class="bg-white shadow-xl rounded-xl overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                Project Name
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                Location
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                Application Date
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                Loan Amount
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                Property Type
+              </th>
+              <th scope="col" class="px-6 py-3 text-right text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                View Details
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="hover:bg-gray-100 transition-colors duration-200">
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Downtown Revitalization Project</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">New York, NY</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">2024-07-26</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">$500,000</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Residential</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a href="application-details.html?id=1"
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+                  View Files
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-100 transition-colors duration-200">
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Uptown Shopping Center</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Los Angeles, CA</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">2024-07-25</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">$1,200,000</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Commercial</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a href="application-details.html?id=2"
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+                  View Files
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-100 transition-colors duration-200">
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Midtown Development</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Chicago, IL</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">2024-07-20</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">$750,000</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Mixed-Use</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a href="application-details.html?id=3"
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+                  View Files
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-100 transition-colors duration-200">
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Suburban Housing Complex</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Houston, TX</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">2024-07-18</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">$300,000</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Residential</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a href="application-details.html?id=4"
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+                  View Files
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-100 transition-colors duration-200">
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Industrial Warehouse Expansion</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Miami, FL</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">2024-07-10</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">$2,000,000</td>
+              <td class="px-6 py-4 text-sm text-gray-700 font-medium">Commercial</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a href="application-details.html?id=5"
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+                  View Files
+                </a>
+              </td>
+            </tr>
+            <!-- More application rows will go here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-gray-800 text-white text-center py-4">
+    <p>© 2024 Open Credit</p>
+  </footer>
+</body>
+
+</html>
