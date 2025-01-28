@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>בקשת הלוואה</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .input-file-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .input-file-container label {
+      background-color: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: right;
+      cursor: pointer;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+    }
+
+    .input-file-container input[type="file"] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans antialiased">
+  <div class="container mx-auto p-8 max-w-6xl">
+    <h1 class="text-4xl font-bold mb-8 text-purple-800 text-center">בקשת הלוואה</h1>
+    <p class="mb-8 text-lg text-gray-700 text-center">אנא מלאו את המידע הבא כדי להגיש בקשה להלוואה:</p>
+
+    <form id="loan-application-form" class="bg-white shadow-md rounded-lg p-8">
+      <div class="flex flex-wrap -mx-4 mb-6">
+        <div class="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+          <label class="block text-gray-700 text-sm font-semibold mb-2" for="projectName">
+            שם הפרויקט:
+          </label>
+          <input
+            class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            id="projectName" name="projectName" type="text" placeholder="הכנס שם פרויקט" required>
+        </div>
+
+        <div class="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+          <label class="block text-gray-700 text-sm font-semibold mb-2" for="loanAmount">
+            סכום ההלוואה:
+          </label>
+          <input
+            class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            id="loanAmount" name="loanAmount" type="number" placeholder="הכנס סכום הלוואה מבוקש" required>
+        </div>
+
+        <div class="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+          <label class="block text-gray-700 text-sm font-semibold mb-2" for="loanReason">
+            סיבת ההלוואה:
+          </label>
+          <textarea
+            class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            id="loanReason" name="loanReason" rows="1" placeholder="הסבר את הסיבה לבקשת ההלוואה" required></textarea>
+        </div>
+      </div>
+
+
+      <div class="mb-6 bg-purple-50 rounded-lg p-6">
+        <h3 class="text-xl font-semibold text-purple-800 mb-4">העלאת מסמכים</h3>
+        <p class="text-gray-700 mb-6">אנא העלה את המסמכים הבאים:</p>
+
+        <div class="grid grid-cols-5 gap-6">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document1">מסמך 1:</label>
+            <div class="input-file-container">
+              <label for="document1">בחר קובץ</label>
+              <input type="file" id="document1" name="document1">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document2">מסמך 2:</label>
+            <div class="input-file-container">
+              <label for="document2">בחר קובץ</label>
+              <input type="file" id="document2" name="document2">
+            </div>
+
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document3">מסמך 3:</label>
+            <div class="input-file-container">
+              <label for="document3">בחר קובץ</label>
+              <input type="file" id="document3" name="document3">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document4">מסמך 4:</label>
+            <div class="input-file-container">
+              <label for="document4">בחר קובץ</label>
+              <input type="file" id="document4" name="document4">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document5">מסמך 5:</label>
+            <div class="input-file-container">
+              <label for="document5">בחר קובץ</label>
+              <input type="file" id="document5" name="document5">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document6">מסמך 6:</label>
+            <div class="input-file-container">
+              <label for="document6">בחר קובץ</label>
+              <input type="file" id="document6" name="document6">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document7">מסמך 7:</label>
+            <div class="input-file-container">
+              <label for="document7">בחר קובץ</label>
+              <input type="file" id="document7" name="document7">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document8">מסמך 8:</label>
+            <div class="input-file-container">
+              <label for="document8">בחר קובץ</label>
+              <input type="file" id="document8" name="document8">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document9">מסמך 9:</label>
+            <div class="input-file-container">
+              <label for="document9">בחר קובץ</label>
+              <input type="file" id="document9" name="document9">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-semibold mb-2" for="document10">מסמך 10:</label>
+            <div class="input-file-container">
+              <label for="document10">בחר קובץ</label>
+              <input type="file" id="document10" name="document10">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-semibold mb-2" for="comments">
+          הערות:
+        </label>
+        <textarea
+          class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          id="comments" name="comments" rows="4" placeholder="הוסף הערות לבקשת ההלוואה"></textarea>
+      </div>
+
+
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-purple-800 mb-4">מסמכים נוספים</h3>
+        <p class="text-gray-700 mb-6">העלה מסמכים נוספים אם יש:</p>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-semibold mb-2" for="randomDocuments">
+            בחר מסמכים נוספים להעלאה:
+          </label>
+          <div class="input-file-container">
+            <label for="randomDocuments">בחר קבצים</label>
+            <input type="file" id="randomDocuments" name="randomDocuments" multiple>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="flex justify-center mt-8">
+        <button type="submit"
+          class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+          הגש בקשה
+        </button>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>

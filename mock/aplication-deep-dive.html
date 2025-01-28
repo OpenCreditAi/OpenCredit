@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פרטי בקשה - מממן</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chat-container {
+      max-height: 200px;
+      /* Reduced max-height */
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .chat-message {
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-message.sender {
+      background-color: #e2e8f0;
+      text-align: right;
+    }
+
+    .chat-message.receiver {
+      background-color: #edf2f7;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans antialiased">
+  <div class="container mx-auto p-4 max-w-6xl">
+    <h1 class="text-3xl font-bold mb-4 text-purple-800 text-center">פרטי בקשה</h1>
+
+    <div class="flex flex-wrap -mx-2">
+      <!-- Left Column -->
+      <div class="w-full md:w-1/2 px-2 mb-4">
+
+        <!-- Application Details -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">פרטי הבקשה</h2>
+          <div class="flex flex-wrap -mx-2 mb-2">
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0">
+              <p class="text-gray-700 mb-1 text-sm"><strong>שם חברה:</strong> חברת בנייה יוקרתית בע"מ</p>
+              <p class="text-gray-700 mb-1 text-sm"><strong>סוג פרויקט:</strong> מגורים</p>
+              <p class="text-gray-700 mb-1 text-sm"><strong>סכום הלוואה:</strong> 5,000,000 ₪</p>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0">
+              <p class="text-gray-700 mb-1 text-sm"><strong>מיקום:</strong> תל אביב</p>
+              <p class="text-gray-700 mb-1 text-sm"><strong>זמן שנותר:</strong> 25 ימים</p>
+              <p class="text-gray-700 mb-1 text-sm"><strong>סטטוס:</strong>
+                <span class="relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs">
+                  <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                  <span class="relative">בטיפול</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- End Application Details -->
+
+        <!-- Chat Section -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">הודעות</h2>
+          <div class="chat-container">
+            <div class="chat-message sender">
+              האם יש מסמכים נוספים שאפשר להעלות ?
+            </div>
+            <div class="chat-message receiver">
+              כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב.
+            </div>
+            <div class="chat-message sender">
+              תודה רבה
+            </div>
+          </div>
+          <div class="flex">
+            <input type="text" placeholder="הקלד הודעה..."
+              class="shadow-sm border rounded py-2 px-3 w-full mr-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <button
+              class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">שלח</button>
+          </div>
+        </div>
+        <!-- End Chat Section -->
+      </div>
+
+      <!-- Right Column -->
+      <div class="w-full md:w-1/2 px-2 mb-4">
+        <!-- Documents Section -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">מסמכים שהועלו</h2>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 1</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 2</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 3</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 4</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 5</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 6</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 7</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 8</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 9</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 10</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-700 mb-1">מסמך 11</h3>
+              <a href="#" class="text-blue-600 hover:underline">הצג מסמך</a>
+            </div>
+          </div>
+        </div>
+        <!-- End Documents Section -->
+        <!-- Financier Acceptance Section -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">הצעות מימון</h2>
+          <div class="text-sm">
+            <h3 class="font-semibold text-gray-700 mb-1">מממן 1</h3>
+            <p class="text-gray-700 mb-1"><strong>סטטוס:</strong>
+              <span class="relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs">
+                <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                <span class="relative">התקבל</span>
+              </span>
+            </p>
+            <p class="text-gray-700 mb-1"><strong>אחוז מההלוואה:</strong> 50%</p>
+          </div>
+          <div class="text-sm">
+            <h3 class="font-semibold text-gray-700 mb-1">מממן 2</h3>
+            <p class="text-gray-700 mb-1"><strong>סטטוס:</strong>
+              <span class="relative inline-block px-2 py-1 font-semibold text-yellow-900 leading-tight text-xs">
+                <span aria-hidden class="absolute inset-0 bg-yellow-200 opacity-50 rounded-full"></span>
+                <span class="relative">בהמתנה</span>
+              </span>
+            </p>
+            <p class="text-gray-700 mb-1"><strong>אחוז מההלוואה:</strong> 25%</p>
+          </div>
+          <div class="text-sm">
+            <h3 class="font-semibold text-gray-700 mb-1">מממן 3</h3>
+            <p class="text-gray-700 mb-1"><strong>סטטוס:</strong>
+              <span class="relative inline-block px-2 py-1 font-semibold text-red-900 leading-tight text-xs">
+                <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
+                <span class="relative">נדחה</span>
+              </span>
+            </p>
+            <p class="text-gray-700 mb-1"><strong>אחוז מההלוואה:</strong> 0%</p>
+          </div>
+        </div>
+        <!-- End Financier Acceptance Section -->
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
