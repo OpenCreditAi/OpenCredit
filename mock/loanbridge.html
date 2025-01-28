@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>פאנל ניהול - מלווה</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    // Simple JavaScript to toggle between different 'pages' or sections in the mockup
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach((sec) => {
+        sec.classList.add('hidden');
+      });
+
+      const targetSection = document.getElementById(sectionId);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+      }
+    }
+
+    function openApplicationDetails(appId) {
+      // In a real app, you would fetch details for the specific application.
+      // For now, just show the "application-details" section.
+      showSection('application-details');
+      // Optionally populate details dynamically:
+      document.getElementById('app-details-title').textContent = `פרטי בקשה #${appId}`;
+    }
+
+    // Demo: "Request more docs" & "Make an offer" forms can be toggled or replaced with modals
+    function requestMoreDocuments() {
+      alert("נשלחה בקשה למסמכים נוספים מהלווה.");
+      // In a real system, you'd record this action in a database.
+    }
+
+    function makeAnOffer() {
+      alert("נשלחה הצעת הלוואה ודרישה לחתימה על מסמכים.");
+      // In a real system, you'd record this action in a database.
+    }
+  </script>
+
+</head>
+<body class="bg-gray-100 font-sans antialiased min-h-screen">
+
+  <!-- Top Bar / Navbar -->
+  <nav class="bg-white shadow-md py-4">
+    <div class="container mx-auto px-8 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-purple-800">פאנל ניהול - מלווה</h1>
+      <div class="space-x-4 rtl:space-x-reverse">
+        <button onclick="showSection('all-applications')" 
+                class="text-gray-600 hover:text-purple-800 font-semibold">
+          כל הבקשות
+        </button>
+        <button onclick="showSection('in-process')" 
+                class="text-gray-600 hover:text-purple-800 font-semibold">
+          בקשות בתהליך
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container mx-auto py-8 px-8">
+
+    <!-- Section: All Applications -->
+    <section id="all-applications" class="section">
+      <h2 class="text-3xl font-bold mb-4 text-purple-800">כל הבקשות</h2>
+      <p class="text-gray-700 mb-6">רשימת כל בקשות ההלוואה הזמינות לבחינה.</p>
+
+      <!-- Table or Cards for Applications -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Mock "cards" for demonstration -->
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold mb-2 text-purple-700">בקשה #1001</h3>
+          <p>שם פרויקט: שיפוץ מטבח</p>
+          <p>סכום הלוואה מבוקש: 50,000 ₪</p>
+          <button 
+            class="mt-4 bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded"
+            onclick="openApplicationDetails(1001)">
+            הצג פרטים
+          </button>
+        </div>
+        
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold mb-2 text-purple-700">בקשה #1002</h3>
+          <p>שם פרויקט: חנות אינטרנטית</p>
+          <p>סכום הלוואה מבוקש: 25,000 ₪</p>
+          <button 
+            class="mt-4 bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded"
+            onclick="openApplicationDetails(1002)">
+            הצג פרטים
+          </button>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold mb-2 text-purple-700">בקשה #1003</h3>
+          <p>שם פרויקט: השקעה בעסק קייטרינג</p>
+          <p>סכום הלוואה מבוקש: 100,000 ₪</p>
+          <button 
+            class="mt-4 bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded"
+            onclick="openApplicationDetails(1003)">
+            הצג פרטים
+          </button>
+        </div>
+
+        <!-- Add more cards as needed -->
+      </div>
+    </section>
+
+    <!-- Section: Application Details -->
+    <section id="application-details" class="section hidden">
+      <h2 id="app-details-title" class="text-3xl font-bold mb-4 text-purple-800">פרטי בקשה #</h2>
+      <p class="text-gray-700 mb-6">
+        כאן יוצגו כל פרטי הבקשה, המסמכים שהלווה העלה, סיבת ההלוואה, סכום מבוקש וכו'.
+      </p>
+
+      <!-- Example Borrower Details / Documents -->
+      <div class="bg-white shadow rounded p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-2 text-purple-700">פרטי לווה</h3>
+        <p>שם: ישראל ישראלי</p>
+        <p>סכום הלוואה מבוקש: 50,000 ₪</p>
+        <p>סיבת ההלוואה: שיפוץ</p>
+        <p class="mt-2">מסמכים שהועלו:
+          <ul class="list-disc list-inside text-gray-600">
+            <li>תדפיסי עו"ש</li>
+            <li>תעודת זהות</li>
+            <li>אישור הכנסה</li>
+          </ul>
+        </p>
+      </div>
+
+      <!-- Actions: Request More Docs / Make an Offer -->
+      <div class="flex flex-col md:flex-row gap-4">
+        <button 
+          class="bg-yellow-400 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+          onclick="requestMoreDocuments()">
+          בקש מסמכים נוספים
+        </button>
+        
+        <button 
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          onclick="makeAnOffer()">
+          עשה הצעה
+        </button>
+
+        <button 
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          onclick="showSection('all-applications')">
+          חזור לרשימה
+        </button>
+      </div>
+    </section>
+
+    <!-- Section: In-Process Applications -->
+    <section id="in-process" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 text-purple-800">בקשות בתהליך</h2>
+      <p class="text-gray-700 mb-6">כאן תוכלו לראות בקשות שנמצאות בשלבי ביניים: בקשות שהמלווה ביקש מהן מסמכים נוספים או בקשות שכבר קיבלו הצעה.</p>
+      
+      <div class="space-y-8">
+
+        <!-- Applications requested more documents -->
+        <div>
+          <h3 class="text-xl font-semibold text-yellow-600 mb-2">נדרשים מסמכים נוספים</h3>
+          <div class="bg-white rounded shadow p-4 mb-2">
+            <p>בקשה #1005 — ממתין למסמכים מהמלווה</p>
+            <button 
+              class="text-purple-700 hover:text-purple-900 underline"
+              onclick="openApplicationDetails(1005)">
+              הצג פרטים
+            </button>
+          </div>
+          <div class="bg-white rounded shadow p-4 mb-2">
+            <p>בקשה #1006 — ממתין למסמכים מהמלווה</p>
+            <button 
+              class="text-purple-700 hover:text-purple-900 underline"
+              onclick="openApplicationDetails(1006)">
+              הצג פרטים
+            </button>
+          </div>
+        </div>
+
+        <!-- Applications that got an offer -->
+        <div>
+          <h3 class="text-xl font-semibold text-green-700 mb-2">הוצעה הצעת הלוואה</h3>
+          <div class="bg-white rounded shadow p-4 mb-2">
+            <p>בקשה #1007 — נשלחה הצעה להלוואה, מחכה לחתימה</p>
+            <button 
+              class="text-purple-700 hover:text-purple-900 underline"
+              onclick="openApplicationDetails(1007)">
+              הצג פרטים
+            </button>
+          </div>
+          <div class="bg-white rounded shadow p-4 mb-2">
+            <p>בקשה #1008 — נשלחה הצעה להלוואה, מחכה לאישור</p>
+            <button 
+              class="text-purple-700 hover:text-purple-900 underline"
+              onclick="openApplicationDetails(1008)">
+              הצג פרטים
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div><!-- End of Main Container -->
+
+</body>
+</html>
