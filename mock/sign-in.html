@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>התחברות - מממן</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans antialiased">
+  <div class="container mx-auto p-8 max-w-md">
+    <h1 class="text-3xl font-bold mb-6 text-purple-800 text-center">התחברות</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <form>
+        <div class="mb-4">
+          <label for="id-number" class="block text-gray-700 text-sm font-bold mb-2">תעודת זהות</label>
+          <input type="text" id="id-number" name="id-number"
+            class="w-full px-4 py-2 border rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="הכנס תעודת זהות">
+        </div>
+
+        <div class="mb-4">
+          <label for="phone-number" class="block text-gray-700 text-sm font-bold mb-2">מספר טלפון</label>
+          <input type="tel" id="phone-number" name="phone-number"
+            class="w-full px-4 py-2 border rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="הכנס מספר טלפון">
+        </div>
+
+        <button type="submit"
+          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">
+          התחבר
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>
