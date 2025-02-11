@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartBizz360 - פתרונות שיווקיים</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+      }
+      nav {
+        background: #555;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+      .section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .feature {
+        background: #e3e3e3;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .campaign-card,
+      .analysis-card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+      .campaign-card-active {
+        background: #d4edda;
+        border: 2px solid #28a745;
+      }
+      .campaign-card img,
+      .analysis-card img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-left: 15px;
+      }
+      .template-card {
+        background: #f3e7bf;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+      .template-card p {
+        font-style: italic;
+      }
+      .button {
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SmartBizz360 - פתרונות שיווקיים</h1>
+    </header>
+    <nav>
+      <a href="index.html">דף הבית</a>
+      <a href="#campaigns">ניהול קמפיינים</a>
+      <a href="#integrations">אינטגרציות</a>
+      <a href="#templates">תבניות פרסום</a>
+      <a href="#analytics">ניתוח ביצועים</a>
+    </nav>
+
+    <div class="container">
+      <section class="section" id="campaigns">
+        <h2>ניהול קמפיינים עם Nora - עוזרת ה-AI שלך לשיווק מנוהל וממוקד</h2>
+        <div class="campaign-card">
+          <img src="nora-avatar.jpg" alt="Nora AI" />
+          <div>
+            <h3>קמפיין ממומן בפייסבוק</h3>
+            <p>פלח שוק - גילאי 25-40, אוכלוסיית עניין: אוכל ומסעדות</p>
+            <button class="button">הפעל קמפיין</button>
+          </div>
+        </div>
+        <div class="campaign-card">
+          <img src="nora-avatar.jpg" alt="Nora AI" />
+          <div>
+            <h3>קמפיין ב-Google Ads</h3>
+            <p>תקציב יומי 50 ₪, קהל יעד - קונים חוזרים</p>
+            <button class="button">הפעל קמפיין</button>
+          </div>
+        </div>
+        <div class="campaign-card campaign-card-active">
+          <img src="nora-avatar.jpg" alt="Nora AI" />
+          <div>
+            <h3>קמפיין גבינה מתנה - פעיל</h3>
+            <p>תקציב יומי 100 בלוקים פרמז'ן, קהל יעד - מכרסמים</p>
+            <button class="button">בטל קמפיין</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="integrations">
+        <h2>תובנות שיווקיות מהחנויות הדיגיטליות שלך</h2>
+        <div class="feature">
+          <p>
+            המוצר הנמכר ביותר שלך הוא חבילת קפה גורמה, כדאי להדגיש אותו
+            בפרסומים.
+          </p>
+          <hr />
+          <p>
+            לקוחות נוטים לרכוש יותר בימי שני ורביעי - שקול לתזמן קמפיינים בהתאם.
+          </p>
+          <hr />
+          <p>
+            רבים מוותרים על קנייה בשל עלות המשלוח הגבוהה - כדאי להפחית אותה, ואף
+            להציע אפשרויות משלוח חינם
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="templates">
+        <h2>תבניות פרסום מוצעות</h2>
+        <div class="template-card">
+          <h3>מודעת פייסבוק - מבצע חורף</h3>
+          <p>״החורף הגיע - 20% הנחה על כל המוצרים!״</p>
+          <button class="button">השתמש בתבנית זו</button>
+        </div>
+        <div class="template-card">
+          <h3>מודעת אינסטגרם - מוצר חם</h3>
+          <p>״המוצר שהכי מדברים עליו עכשיו - הזמינו לפני שייגמר!״</p>
+          <button class="button">השתמש בתבנית זו</button>
+        </div>
+        <div class="template-card">
+          <h3>מודעת רחוב - רוצו רוצו!</h3>
+          <p>״זה ממש קרוב לכאן! רוצו מהר!!!״</p>
+          <button class="button">השתמש בתבנית זו</button>
+        </div>
+      </section>
+
+      <section class="section" id="analytics">
+        <h2>ניתוח ביצועים</h2>
+        <div class="analysis-card">
+          <div>
+            <h3>"גבינה מתנה"</h3>
+            <p>תקופת פעילות: 10 ימים</p>
+            <p>עלות כוללת: 1,500 ₪</p>
+            <p>עלות ממוצעת פר לקוח: 30 ₪</p>
+            <p>אפקטיביות: 75% (ROI חיובי)</p>
+            <p>
+              הצעה לשיפור: כדאי להוסיף תוכן ויזואלי מרתק ולפלח טוב יותר את קהל
+              היעד העכברי
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
