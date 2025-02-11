@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartBizz360 - קבלת הלוואות</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+      }
+      nav {
+        background: #555;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+      .section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .widget {
+        background: #e3e3e3;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .recommended {
+        background: #d4edda;
+        border: 2px solid #28a745;
+      }
+      .blue {
+        background: #2863a7 !important;
+      }
+      .loan-button {
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SmartBizz360 - קבלת הלוואות</h1>
+    </header>
+    <nav>
+      <a href="index.html">דף הבית</a>
+      <a href="#comparison">השוואת הצעות</a>
+      <a href="#how-it-works">איך זה עובד?</a>
+    </nav>
+
+    <div class="container">
+      <section class="section" id="comparison">
+        <h2>השוואת הצעות הלוואה</h2>
+        <div class="widget recommended">
+          <h3>בנק הפועלים - מומלץ</h3>
+          <p>ריבית: 4.2% | תקופה: 6 שנים | סכום מרבי: 250,000 ₪</p>
+          <p>מבוסס על נתוני העסק שלך</p>
+          <button class="loan-button">שליחת בקשת הלוואה</button>
+        </div>
+        <div class="widget">
+          <h3>בנק לאומי</h3>
+          <p>ריבית: 4.5% | תקופה: 5 שנים | סכום מרבי: 200,000 ₪</p>
+          <button class="loan-button">שליחת בקשת הלוואה</button>
+        </div>
+        <div class="widget">
+          <h3>קרן חוץ בנקאית</h3>
+          <p>ריבית: 5.0% | תקופה: 4 שנים | סכום מרבי: 150,000 ₪</p>
+          <button class="loan-button">שליחת בקשת הלוואה</button>
+        </div>
+        <button class="loan-button blue">השוואת הצעות נוספות</button>
+      </section>
+
+      <section class="section" id="how-it-works">
+        <h2>איך זה עובד?</h2>
+        <div class="widget">
+          <h3>חיתום דיגיטלי ושליחת בקשה</h3>
+          <p>
+            באמצעות Open Banking API ניתן לשלוח בקשה מאובטחת להלוואה ישירות
+            למוסדות הפיננסיים.
+          </p>
+          <p>
+            התהליך מתבצע באופן דיגיטלי מלא ומאובטח, ללא צורך בהגשת מסמכים
+            פיזיים.
+          </p>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
