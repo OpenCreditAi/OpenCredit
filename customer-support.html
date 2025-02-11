@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartBizz360 - ניהול שירות לקוחות</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding-bottom: 25px;
+        padding-top: 20px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+      }
+      h2 {
+        margin-top: 0;
+      }
+      nav {
+        background: #555;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+      nav a.selected {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 5px;
+        background: #7b7a7a;
+        border-radius: 10px;
+        border: 3px solid #cac7c7;
+      }
+      .section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .widget {
+        background: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+      }
+      .templates {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .button {
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .shluk {
+        margin-top: 12px;
+      }
+      .editable {
+        width: 90%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      h3 {
+        margin: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SmartBizz360 - ניהול שירות לקוחות</h1>
+    </header>
+    <nav>
+      <a href="index.html">דף הבית</a>
+      <a href="dashboard.html">דשבורד</a>
+      <a href="cashflow.html">תזרים מזומנים</a>
+      <a href="invoices.html">ניהול חשבוניות ודוחות מס</a>
+      <a href="loans.html">הלוואות</a>
+      <a href="business-management.html">Thomas</a>
+      <a href="marketing.html">שיווק</a>
+      <a href="customer-support.html" class="selected">שירות לקוחות</a>
+    </nav>
+
+    <div class="container">
+      <section class="section" id="ai-support">
+        <h2>ניהול תמיכה עם Ava</h2>
+        <p>Ava מספקת מענה אוטומטי ללקוחות בזמן אמת</p>
+
+        <div class="widget templates">
+          <h3>עריכת תבניות תשובות</h3>
+
+          <label>⚡ מהו זמן המשלוח המשוער?</label>
+          <input
+            type="text"
+            class="editable"
+            value="המשלוח יגיע תוך 3-5 ימי עסקים." />
+
+          <label>💳 איך ניתן לשנות את אמצעי התשלום?</label>
+          <input
+            type="text"
+            class="editable"
+            value="ניתן לשנות את אמצעי התשלום באזור האישי תחת 'הגדרות תשלום'." />
+
+          <label>📦 מה לעשות אם קיבלתי מוצר פגום?</label>
+          <input
+            type="text"
+            class="editable"
+            value="אנחנו מצטערים על כך! ניתן לפנות לתמיכה עם מספר ההזמנה לקבלת פתרון." />
+
+          <button class="button shluk">➕ הוספת תבנית חדשה</button>
+        </div>
+      </section>
+
+      <section class="section" id="customer-insights">
+        <h2>תובנות מלקוחות</h2>
+        <p>
+          Ava זיהתה כי 30% מהלקוחות שואלים על תנאי משלוח. מומלץ להוסיף מידע נגיש
+          יותר.
+        </p>
+        <p>10% מהלקוחות ביקשו תמיכה בהחזר כספי - שקול לשפר את תהליך ההחזר.</p>
+      </section>
+
+      <section class="section" id="customer-feedback">
+        <h2>משוב לקוחות</h2>
+        <div class="widget">
+          <p>
+            ⭐⭐⭐⭐☆ "שירות מהיר ומקצועי, אבל לקח לי זמן למצוא מידע על
+            משלוחים."
+          </p>
+        </div>
+        <div class="widget">
+          <p>
+            ⭐⭐⭐☆☆ "הצ'אט עם Ava היה מהיר, אבל העדפתי לדבר עם נציג אנושי."
+          </p>
+        </div>
+        <div class="widget">
+          <p>⭐⭐⭐⭐⭐ "שירות מדהים, קיבלתי פתרון מיד!"</p>
+        </div>
+      </section>
+
+      <section class="section" id="critical-chats">
+        <h2>צ'אטים קריטיים הדורשים טיפול אנושי</h2>
+        <div class="widget">
+          <p>
+            <strong>לקוח:</strong> "הזמנתי מוצר לפני שבועיים ועדיין לא קיבלתי
+            אותו!"
+          </p>
+          <button class="button">העבר לנציג שירות</button>
+        </div>
+        <div class="widget">
+          <p><strong>לקוח:</strong> "קיבלתי מוצר פגום, אני רוצה החזר מלא."</p>
+          <button class="button">העבר לנציג שירות</button>
+        </div>
+      </section>
+
+      <section class="section" id="performance">
+        <h2>ביצועי שירות לקוחות</h2>
+        <div class="widget">
+          <p><strong>מספר פניות בחודש:</strong> 1,200</p>
+          <p><strong>זמן תגובה ממוצע:</strong> 2 דקות</p>
+          <p><strong>שביעות רצון לקוחות:</strong> 88%</p>
+          <p><strong>המלצה לשיפור:</strong> הוספת קטגוריות למענה מהיר.</p>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
