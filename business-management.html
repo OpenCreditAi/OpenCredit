@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartBizz360 - עוזר AI Thomas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+      }
+      nav {
+        background: #555;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+      .section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .insight {
+        background: #e3e3e3;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .insight:hover {
+        background: #d4edda;
+      }
+      .chat-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .chat-message {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .chat-message img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-left: 10px;
+      }
+      .chat-message p {
+        background: #e3e3e3;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 70%;
+      }
+      .user-message {
+        justify-content: flex-end;
+      }
+      .user-message p {
+        background: #28a745;
+        color: white;
+      }
+      .chat-input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      function openChat(insight) {
+        document.getElementById('chat-topic').innerText = insight
+      }
+      function resetChat() {
+        openChat('מוזמן לשאול אותי כל דבר!')
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>SmartBizz360 - עוזר AI Thomas</h1>
+    </header>
+    <nav>
+      <a href="index.html">דף הבית</a>
+      <a href="#insights">תובנות AI</a>
+      <a href="#chat">שיחה עם Thomas</a>
+    </nav>
+
+    <div class="container">
+      <section class="section" id="insights">
+        <h2>תובנות AI של Thomas</h2>
+        <div
+          class="insight"
+          onclick="openChat('הזדמנויות עסקיות: שוק הדבקים ממש פורח וכדאי להרחיב אותו')">
+          <h3>הזדמנויות עסקיות</h3>
+          <p>שוק הדבקים ממש פורח וכדאי להרחיב אותו</p>
+        </div>
+        <div
+          class="insight"
+          onclick="openChat('הוצאות: זיהיתי שתשלומי החשמל שלך עלו ב-20%, אולי שווה לבדוק ספק חלופי')">
+          <h3>חיסכון בהוצאות</h3>
+          <p>תשלומי החשמל שלך עלו ב-20%, אולי כדאי לבדוק ספק חלופי</p>
+        </div>
+        <div
+          class="insight"
+          onclick="openChat('מגמות שוק: יש עלייה של 15% בביקוש לשירותי ייעוץ פיננסי')">
+          <h3>מגמות שוק</h3>
+          <p>יש עלייה של 15% בביקוש לשירותי ייעוץ פיננסי</p>
+        </div>
+      </section>
+
+      <section class="section chat-container" id="chat">
+        <h2>שיחה עם Thomas</h2>
+        <p>
+          <strong>נושא השיחה:</strong>
+          <span id="chat-topic">מוזמן לשאול אותי כל דבר!</span>
+        </p>
+        <div class="chat-message">
+          <img src="thomas-avatar.jpg" alt="Thomas AI" />
+          <p>שלום! אני Thomas, עוזר ה-AI שלך. איך תרצה להעמיק בנושא?</p>
+        </div>
+        <input type="text" class="chat-input" placeholder="הקלד הודעה..." />
+        <button>שלח</button>
+        <button onclick="resetChat()">צור שיחה חדשה</button>
+      </section>
+    </div>
+  </body>
+</html>
