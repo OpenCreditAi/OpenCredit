@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartBizz360 - ניהול חשבוניות ודוחות מס</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+      }
+      nav {
+        background: #555;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+      .section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .widget {
+        background: #e3e3e3;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      button {
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SmartBizz360 - ניהול חשבוניות ודוחות מס</h1>
+    </header>
+    <nav>
+      <a href="index.html">דף הבית</a>
+      <a href="#invoices">חשבוניות</a>
+      <a href="#reports">דוחות מס</a>
+    </nav>
+
+    <div class="container">
+      <section class="section" id="invoices">
+        <h2>חשבוניות</h2>
+        <div class="widget">
+          <h3>חשבונית אחרונה</h3>
+          <p>מספר: 123456</p>
+          <p>תאריך: 10/02/2025</p>
+          <p>סכום: 5,000 ₪</p>
+          <button>הורדת חשבונית</button>
+        </div>
+        <div class="widget">
+          <h3>חשבונית קודמת</h3>
+          <p>מספר: 123455</p>
+          <p>תאריך: 10/01/2025</p>
+          <p>סכום: 4,600 ₪</p>
+          <button>הורדת חשבונית</button>
+        </div>
+        <button>יצירת חשבונית חדשה (אוטומטית)</button>
+      </section>
+
+      <section class="section" id="reports">
+        <h2>דוחות מס</h2>
+        <div class="widget">
+          <h3>דו"ח מע"מ חודשי</h3>
+          <p>חודש: ינואר 2025</p>
+          <p>סה"כ עסקאות חייבות במע"מ: 50,000 ₪</p>
+          <p>מע"מ לתשלום: 8,500 ₪</p>
+          <button>הורדת דו"ח</button>
+        </div>
+        <div class="widget">
+          <h3>דו"ח מע"מ חודשי</h3>
+          <p>חודש: דצמבר 2024</p>
+          <p>סה"כ עסקאות חייבות במע"מ: 57,000 ₪</p>
+          <p>מע"מ לתשלום: 8,900 ₪</p>
+          <button>הורדת דו"ח</button>
+        </div>
+        <button>הפקת דו"ח חדש (אוטומטי)</button>
+      </section>
+
+      <section class="section" id="payments">
+        <h2>חיבור למערכת תשלומים</h2>
+        <div class="widget">
+          <h3>תשלומים מחוברים</h3>
+          <p>סטטוס: מחובר לחנות המסחר האלקטרוני</p>
+          <button>סנכרון נתונים</button>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
