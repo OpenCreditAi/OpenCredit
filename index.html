@@ -19,8 +19,12 @@
       header {
         background: #333;
         color: #fff;
-        padding: 10px 0;
+        padding-bottom: 25px;
+        padding-top: 20px;
         text-align: center;
+      }
+      h1 {
+        margin: 0;
       }
       nav {
         background: #555;
@@ -33,11 +37,20 @@
         margin: 0 15px;
         font-weight: bold;
       }
+      nav a.selected {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 5px;
+        background: #7b7a7a;
+        border-radius: 10px;
+        border: 3px solid #cac7c7;
+      }
       .dashboard,
       .section {
         background: white;
-        padding: 20px;
-        margin: 20px 0;
+        padding-inline: 20px;
+        padding-top: 0.2px;
+        padding-bottom: 15px;
+        margin: 15px 0;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
@@ -48,12 +61,14 @@
       <h1>SmartBizz360 - ניהול פיננסי לעסקים קטנים</h1>
     </header>
     <nav>
+      <a href="index.html" class="selected">דף הבית</a>
       <a href="dashboard.html">דשבורד</a>
       <a href="cashflow.html">תזרים מזומנים</a>
-      <a href="invoices.html">חשבוניות</a>
+      <a href="invoices.html">ניהול חשבוניות ודוחות מס</a>
       <a href="loans.html">הלוואות</a>
-      <a href="business-management.html">עוזר AI</a>
+      <a href="business-management.html">Thomas</a>
       <a href="marketing.html">שיווק</a>
+      <a href="customer-support.html">שירות לקוחות</a>
     </nav>
 
     <div class="container">
@@ -77,7 +92,7 @@
         <p>גישה להצעות הלוואה מותאמות אישית לעסק שלך.</p>
       </section>
 
-      <section id="ai" class="section">
+      <section id="business-management" class="section">
         <h2>עוזר Thomas - AI</h2>
         <p>מציע המלצות פיננסיות ואסטרטגיות שיפור ניהול.</p>
       </section>
@@ -85,6 +100,11 @@
       <section id="marketing" class="section">
         <h2>שירותי שיווק</h2>
         <p>ניהול קמפיינים, ניתוח ביצועים ושיפור ROI.</p>
+      </section>
+
+      <section id="customer-support" class="section">
+        <h2>שירות לקוחות</h2>
+        <p>ניהול תמיכה, תובנות מלקוחות, וביצועי שירות</p>
       </section>
     </div>
   </body>

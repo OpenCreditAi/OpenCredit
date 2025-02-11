@@ -19,8 +19,12 @@
       header {
         background: #333;
         color: #fff;
-        padding: 10px 0;
+        padding-bottom: 25px;
+        padding-top: 20px;
         text-align: center;
+      }
+      h1 {
+        margin: 0;
       }
       nav {
         background: #555;
@@ -33,10 +37,19 @@
         margin: 0 15px;
         font-weight: bold;
       }
+      nav a.selected {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 5px;
+        background: #7b7a7a;
+        border-radius: 10px;
+        border: 3px solid #cac7c7;
+      }
       .section {
         background: white;
-        padding: 20px;
-        margin: 20px 0;
+        padding-inline: 20px;
+        padding-top: 0.2px;
+        padding-bottom: 15px;
+        margin: 15px 0;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
@@ -94,10 +107,13 @@
     </header>
     <nav>
       <a href="index.html">דף הבית</a>
-      <a href="#campaigns">ניהול קמפיינים</a>
-      <a href="#integrations">אינטגרציות</a>
-      <a href="#templates">תבניות פרסום</a>
-      <a href="#analytics">ניתוח ביצועים</a>
+      <a href="dashboard.html">דשבורד</a>
+      <a href="cashflow.html">תזרים מזומנים</a>
+      <a href="invoices.html">ניהול חשבוניות ודוחות מס</a>
+      <a href="loans.html">הלוואות</a>
+      <a href="business-management.html">Thomas</a>
+      <a href="marketing.html" class="selected">שיווק</a>
+      <a href="customer-support.html">שירות לקוחות</a>
     </nav>
 
     <div class="container">
@@ -133,8 +149,7 @@
         <h2>תובנות שיווקיות מהחנויות הדיגיטליות שלך</h2>
         <div class="feature">
           <p>
-            המוצר הנמכר ביותר שלך הוא חבילת קפה גורמה, כדאי להדגיש אותו
-            בפרסומים
+            המוצר הנמכר ביותר שלך הוא חבילת קפה גורמה, כדאי להדגיש אותו בפרסומים
           </p>
           <hr />
           <p>

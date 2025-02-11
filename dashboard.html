@@ -19,8 +19,15 @@
       header {
         background: #333;
         color: #fff;
-        padding: 10px 0;
+        padding-bottom: 25px;
+        padding-top: 20px;
         text-align: center;
+      }
+      h1 {
+        margin: 0;
+      }
+      h2 {
+        margin-top: 0;
       }
       nav {
         background: #555;
@@ -32,6 +39,13 @@
         text-decoration: none;
         margin: 0 15px;
         font-weight: bold;
+      }
+      nav a.selected {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 5px;
+        background: #7b7a7a;
+        border-radius: 10px;
+        border: 3px solid #cac7c7;
       }
       .dashboard {
         background: white;
@@ -61,11 +75,13 @@
     </header>
     <nav>
       <a href="index.html">דף הבית</a>
-      <a href="#cashflow">תזרים מזומנים</a>
-      <a href="#invoices">חשבוניות</a>
-      <a href="#loans">הלוואות</a>
-      <a href="#ai">עוזר AI</a>
-      <a href="#marketing">שיווק</a>
+      <a href="dashboard.html" class="selected">דשבורד</a>
+      <a href="cashflow.html">תזרים מזומנים</a>
+      <a href="invoices.html">ניהול חשבוניות ודוחות מס</a>
+      <a href="loans.html">הלוואות</a>
+      <a href="business-management.html">Thomas</a>
+      <a href="marketing.html">שיווק</a>
+      <a href="customer-support.html">שירות לקוחות</a>
     </nav>
 
     <div class="container">
