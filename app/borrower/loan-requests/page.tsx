@@ -146,11 +146,15 @@ export default function LoanRequests() {
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">{loan.amount}</td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">
-                        {loan.daysLeft} ימים
+                        ימים {loan.daysLeft}
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">
                         <Link href={`/borrower/loan-requests/${loan.id}`}>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-purple-700 border-purple-700 hover:bg-purple-50"
+                          >
                             צפה בפרטים
                           </Button>
                         </Link>
@@ -196,7 +200,7 @@ export default function LoanRequests() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className="mb-4">
-                      <strong>זמן שנותר:</strong> {loan.daysLeft} ימים
+                      <strong>זמן שנותר:</strong> ימים {loan.daysLeft}
                     </p>
                     <Link href={`/borrower/loan-requests/${loan.id}`}>
                       <Button className="w-full">צפה בפרטים</Button>

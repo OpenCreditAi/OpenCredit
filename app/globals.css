@@ -125,3 +125,40 @@
   z-index: 10;
 }
 
+/* Add these RTL-specific styles at the end of the file */
+
+/* RTL text alignment */
+body {
+  text-align: right;
+}
+
+/* Fix input text alignment */
+input,
+textarea,
+select {
+  text-align: right;
+}
+
+/* Fix button spacing for RTL */
+.rtl\:space-x-reverse > * + * {
+  margin-right: var(--tw-space-x-reverse) !important;
+  margin-left: calc(var(--tw-space-x) * (1 - var(--tw-space-x-reverse))) !important;
+}
+
+/* Ensure table headers and cells are right-aligned */
+th,
+td {
+  text-align: right;
+}
+
+/* Fix dropdown alignment */
+.select-trigger,
+.select-content {
+  text-align: right;
+}
+
+/* Fix card content alignment */
+.card-content {
+  text-align: right;
+}
+

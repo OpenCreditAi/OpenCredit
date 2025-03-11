@@ -162,7 +162,7 @@ export default function SignUp() {
                 <Input id="id-photo" name="idPhoto" type="file" accept="image/*" onChange={handleFileChange} required />
               </div>
 
-              <div className="md:col-span-2 flex items-center space-x-2 rtl:space-x-reverse">
+              <div className="md:col-span-2 flex items-center space-x-0 space-x-reverse rtl:space-x-reverse">
                 <Checkbox
                   id="captcha"
                   name="captcha"
@@ -170,7 +170,9 @@ export default function SignUp() {
                   onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, captcha: checked as boolean }))}
                   required
                 />
-                <Label htmlFor="captcha">אני לא רובוט</Label>
+                <Label htmlFor="captcha" className="mr-2">
+                  אני לא רובוט
+                </Label>
               </div>
             </div>
 

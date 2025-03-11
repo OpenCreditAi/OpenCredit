@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button"
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <header className="bg-white shadow-md py-4">
+      <header className="bg-white shadow-md py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-purple-800">OpenCredit</h1>
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-white font-bold text-xl ml-2">
+              OC
+            </div>
+            <h1 className="text-2xl font-bold text-purple-800">OpenCredit</h1>
+          </div>
           <div className="space-x-4 rtl:space-x-reverse">
             <Link href="/auth/sign-in">
               <Button variant="outline">התחברות</Button>
@@ -38,7 +43,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 text-left">
+          <div className="grid md:grid-cols-3 gap-8 text-right">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold mb-3 text-purple-700">ליזמים</h3>
               <p className="text-gray-600">

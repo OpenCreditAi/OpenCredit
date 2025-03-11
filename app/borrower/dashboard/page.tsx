@@ -164,7 +164,7 @@ export default function BorrowerDashboard() {
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">{loan.amount}</td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">
-                        {loan.daysLeft} ימים
+                        ימים {loan.daysLeft}
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">
                         <Link href={`/borrower/loan-requests/${loan.id}`}>
@@ -214,7 +214,7 @@ export default function BorrowerDashboard() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className="mb-4">
-                      <strong>זמן שנותר:</strong> {loan.daysLeft} ימים
+                      <strong>זמן שנותר:</strong> ימים {loan.daysLeft}
                     </p>
                     <Link href={`/borrower/loan-requests/${loan.id}`}>
                       <Button className="w-full">צפה בפרטים</Button>

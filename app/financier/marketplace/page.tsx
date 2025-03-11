@@ -263,7 +263,7 @@ export default function Marketplace() {
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">{loan.amount}</td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-right text-sm">
-                        {loan.daysLeft} ימים
+                        ימים {loan.daysLeft}
                       </td>
                     </tr>
                   ))}
@@ -310,9 +310,9 @@ export default function Marketplace() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className="mb-4">
-                      <strong>זמן שנותר:</strong> {loan.daysLeft} ימים
+                      <strong>זמן שנותר:</strong> ימים {loan.daysLeft}
                     </p>
-                    <Button className="w-full">הצג פרטים</Button>
+                    <Button className="w-full bg-purple-700 hover:bg-purple-800">הצג פרטים</Button>
                   </CardContent>
                 </Card>
               ))}

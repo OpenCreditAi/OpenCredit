@@ -1,16 +1,63 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ChatWidget } from "@/components/chat-widget"
+import { Send, Paperclip } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function ApplicationDetails({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [message, setMessage] = useState("")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Enhanced messages state with more detailed structure
+  const [messages, setMessages] = useState([
+    {
+      id: "1",
+      text: "שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.",
+      sender: "financier",
+      timestamp: new Date(Date.now() - 3600000),
+    },
+    {
+      id: "2",
+      text: "בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?",
+      sender: "borrower",
+      timestamp: new Date(Date.now() - 3500000),
+    },
+    {
+      id: "3",
+      text: "האם יש מסמכים נוספים שאפשר להעלות?",
+      sender: "financier",
+      timestamp: new Date(Date.now() - 3400000),
+    },
+    {
+      id: "4",
+      text: "כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב.",
+      sender: "borrower",
+      timestamp: new Date(Date.now() - 3300000),
+    },
+    {
+      id: "5",
+      text: "תודה רבה",
+      sender: "financier",
+      timestamp: new Date(Date.now() - 3200000),
+    },
+  ])
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages])
 
   // Mock data for the loan request
   const loanRequest = {
@@ -39,14 +86,40 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
       { sender: true, text: "כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב." },
       { sender: false, text: "תודה רבה" },
     ],
+    borrowerName: "ישראל ישראלי",
+    borrowerId: "12345",
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault()
+
     if (message.trim()) {
-      // In a real app, this would send the message to the server
-      // For now, we'll just clear the input
+      // Add the new message to the chat
+      const newMessage = {
+        id: Date.now().toString(),
+        text: message,
+        sender: "financier",
+        timestamp: new Date(),
+      }
+
+      setMessages([...messages, newMessage])
       setMessage("")
+
+      // Simulate a response (in a real app, this would be handled by the server)
+      setTimeout(() => {
+        const response = {
+          id: (Date.now() + 1).toString(),
+          text: "תודה על ההודעה. אני אבדוק את זה ואחזור אליך בהקדם.",
+          sender: "borrower",
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, response])
+      }, 1000)
     }
+  }
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
   }
 
   const requestMoreDocuments = () => {
@@ -57,6 +130,22 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
     alert("נשלחה הצעת הלוואה ודרישה לחתימה על מסמכים.")
   }
 
+  // Initial chat messages
+  const initialMessages = [
+    {
+      id: "1",
+      text: "שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.",
+      sender: "user" as const,
+      timestamp: new Date(Date.now() - 3600000),
+    },
+    {
+      id: "2",
+      text: "בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?",
+      sender: "borrower" as const,
+      timestamp: new Date(Date.now() - 3500000),
+    },
+  ]
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4 text-purple-800 text-center">פרטי בקשה #{params.id}</h1>
@@ -66,6 +155,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
           <TabsTrigger value="details">פרטי בקשה</TabsTrigger>
           <TabsTrigger value="documents">מסמכים</TabsTrigger>
           <TabsTrigger value="communication">תקשורת</TabsTrigger>
+          <TabsTrigger value="chat">צ'אט</TabsTrigger>
         </TabsList>
 
         <TabsContent value="details">
@@ -90,7 +180,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
                     <strong>מיקום:</strong> {loanRequest.location}
                   </p>
                   <p className="text-gray-700">
-                    <strong>זמן שנותר:</strong> {loanRequest.daysLeft} ימים
+                    <strong>זמן שנותר:</strong> ימים {loanRequest.daysLeft}
                   </p>
                   <p className="text-gray-700">
                     <strong>סטטוס:</strong>
@@ -111,7 +201,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-gray-700">
-                    <strong>שם:</strong> ישראל ישראלי
+                    <strong>שם:</strong> {loanRequest.borrowerName}
                   </p>
                   <p className="text-gray-700">
                     <strong>תפקיד:</strong> מנכ"ל
@@ -169,8 +259,8 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
             </CardHeader>
             <CardContent>
               <div className="chat-container mb-4">
-                {loanRequest.messages.map((msg, index) => (
-                  <div key={index} className={`chat-message ${msg.sender ? "receiver" : "sender"}`}>
+                {messages.slice(0, 5).map((msg, index) => (
+                  <div key={index} className={`chat-message ${msg.sender === "borrower" ? "receiver" : "sender"}`}>
                     {msg.text}
                   </div>
                 ))}
@@ -181,11 +271,72 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
                   placeholder="הקלד הודעה..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="mr-2"
+                  className="ml-2 mr-0" // Swap margin for RTL
                 />
                 <Button onClick={handleSendMessage}>שלח</Button>
               </div>
             </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="chat">
+          <Card className="h-[600px] flex flex-col">
+            <CardHeader className="border-b">
+              <div className="flex items-center">
+                <Avatar className="h-10 w-10 ml-3">
+                  <AvatarImage src="/placeholder.svg?height=40&width=40" alt={loanRequest.borrowerName} />
+                  <AvatarFallback className="bg-purple-100 text-purple-800">
+                    {loanRequest.borrowerName.substring(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle className="text-xl text-gray-800">{loanRequest.borrowerName}</CardTitle>
+                  <p className="text-sm text-gray-500">{loanRequest.companyName}</p>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.sender === "financier" ? "justify-end" : "justify-start"}`}>
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 ${
+                        msg.sender === "financier" ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      <div className="text-sm">{msg.text}</div>
+                      <div
+                        className={`text-xs mt-1 ${msg.sender === "financier" ? "text-purple-200" : "text-gray-500"}`}
+                      >
+                        {formatTime(msg.timestamp)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            </CardContent>
+
+            <div className="p-4 border-t">
+              <form onSubmit={handleSendMessage} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Button type="button" variant="ghost" size="icon" className="rounded-full">
+                  <Paperclip className="h-5 w-5" />
+                  <span className="sr-only">צרף קובץ</span>
+                </Button>
+                <Input
+                  type="text"
+                  placeholder="הקלד הודעה..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="flex-1"
+                />
+                <Button type="submit" size="icon" className="rounded-full bg-purple-600">
+                  <Send className="h-5 w-5" />
+                  <span className="sr-only">שלח</span>
+                </Button>
+              </form>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>
@@ -237,6 +388,13 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
           חזור לרשימה
         </Button>
       </div>
+
+      {/* Chat Widget (floating) */}
+      <ChatWidget
+        borrowerName={loanRequest.borrowerName}
+        borrowerId={loanRequest.borrowerId}
+        initialMessages={initialMessages}
+      />
     </div>
   )
 }
