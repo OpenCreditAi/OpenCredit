@@ -3,13 +3,13 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Send, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DocumentItem } from "@/components/document-item"
 
 export default function LoanRequestDetails({ params }: { params: { id: string } }) {
   const [message, setMessage] = useState("")
@@ -116,6 +116,22 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
+  }
+
+  const handleViewDocument = (docName: string) => {
+    console.log(`Viewing document: ${docName}`)
+    // Here you would implement the document viewing logic
+    alert(`מציג מסמך: ${docName}`)
+  }
+
+  const handleReplaceDocument = (docName: string) => {
+    console.log(`Document replaced: ${docName}`)
+    // This is handled inside the DocumentItem component
+  }
+
+  const handleAddDocument = (docName: string) => {
+    console.log(`Document added: ${docName}`)
+    // This is handled inside the DocumentItem component
   }
 
   return (
@@ -251,20 +267,17 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
               <CardTitle className="text-xl text-gray-800">מסמכים שהועלו</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {loanRequest.documents.map((doc, index) => (
-                  <div key={index}>
-                    <h3 className="font-semibold text-gray-700 mb-1">{doc.name}</h3>
-                    {doc.status === "uploaded" ? (
-                      <Link href="#" className="text-blue-600 hover:underline">
-                        הצג מסמך
-                      </Link>
-                    ) : (
-                      <Link href="#" className="text-blue-600 hover:underline">
-                        הוסף מסמך
-                      </Link>
-                    )}
-                  </div>
+                  <DocumentItem
+                    key={index}
+                    name={doc.name}
+                    status={doc.status as "uploaded" | "missing"}
+                    userType="borrower"
+                    onView={() => handleViewDocument(doc.name)}
+                    onReplace={() => handleReplaceDocument(doc.name)}
+                    onAdd={() => handleAddDocument(doc.name)}
+                  />
                 ))}
               </div>
             </CardContent>
