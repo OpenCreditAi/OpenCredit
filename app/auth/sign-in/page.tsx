@@ -9,26 +9,47 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import axios from "axios"
 
 export default function SignIn() {
   const router = useRouter()
-  const [idNumber, setIdNumber] = useState("")
-  const [phoneNumber, setPhoneNumber] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("") // Clear previous errors
+    setIsLoading(true)
 
-    // In a real app, this would authenticate with the server
-    // For now, we'll simulate a successful login and redirect
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/signin`, {
+        email,
+        password,
+      })
 
-    // Determine if the user is a borrower or financier based on ID
-    // This is just a mock implementation
-    const isBorrower = Number.parseInt(idNumber) % 2 === 0
+      console.log("User signed in:", response.data)
 
-    if (isBorrower) {
-      router.push("/borrower/dashboard")
-    } else {
-      router.push("/financier/dashboard")
+      // Save token & role in localStorage
+      localStorage.setItem("access_token", response.data.access_token)
+      localStorage.setItem("user_role", response.data.user.role) // Save role
+
+      if (response.data.user.role == "borrower") {
+        router.push("/borrower/dashboard")
+      } else if (response.data.user.role == "financier") {
+        router.push("/financier/dashboard")
+      } else {
+        console.log("unable to sign in")
+      }
+    } catch (error) {
+      console.error("Signin error:", error.response?.data?.error || error.message)
+      // Set the error message to display to the user
+      setError(error.response?.data?.error || "שגיאת התחברות: אימייל או סיסמה שגויים")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -42,30 +63,40 @@ export default function SignIn() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
+              {error && (
+                <Alert variant="destructive" className="py-2">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
               <div className="space-y-2">
-                <Label htmlFor="id-number">תעודת זהות</Label>
+                <Label htmlFor="email">אימייל</Label>
                 <Input
-                  id="id-number"
-                  type="text"
-                  placeholder="הכנס תעודת זהות"
-                  value={idNumber}
-                  onChange={(e) => setIdNumber(e.target.value)}
+                  id="email"
+                  type="email"
+                  placeholder="הכנס את האימייל שלך"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone-number">מספר טלפון</Label>
+                <Label htmlFor="password">סיסמה</Label>
                 <Input
-                  id="phone-number"
-                  type="tel"
-                  placeholder="הכנס מספר טלפון"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  id="password"
+                  type="password"
+                  placeholder="הכנס את הסיסמה שלך"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                התחבר
+              <div className="flex justify-end">
+                <Link href="/auth/forgot-password" className="text-sm text-purple-600 hover:underline">
+                  שכחת סיסמה?
+                </Link>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "מתחבר..." : "התחבר"}
               </Button>
             </div>
           </form>

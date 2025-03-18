@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -11,11 +11,15 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2 } from "lucide-react"
+import axios from "axios"
 
 export default function SignUp() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get("role") || ""
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -23,10 +27,49 @@ export default function SignUp() {
     idNumber: "",
     phoneNumber: "",
     address: "",
-    userType: defaultRole,
+    role: defaultRole,
     idPhoto: null,
+    password: "",
+    confirmPassword: "",
     captcha: false,
   })
+
+  const [errors, setErrors] = useState({
+    password: "",
+    confirmPassword: "",
+  })
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [apiError, setApiError] = useState("")
+
+  const validatePassword = (password: string) => {
+    if (password.length < 8) {
+      return "הסיסמה חייבת להכיל לפחות 8 תווים"
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "הסיסמה חייבת להכיל לפחות אות גדולה אחת"
+    }
+    if (!/[a-z]/.test(password)) {
+      return "הסיסמה חייבת להכיל לפחות אות קטנה אחת"
+    }
+    if (!/[0-9]/.test(password)) {
+      return "הסיסמה חייבת להכיל לפחות ספרה אחת"
+    }
+    return ""
+  }
+
+  useEffect(() => {
+    // Validate password when it changes
+    const passwordError = validatePassword(formData.password)
+    setErrors((prev) => ({ ...prev, password: passwordError }))
+
+    // Check if confirm password matches
+    if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      setErrors((prev) => ({ ...prev, confirmPassword: "הסיסמאות אינן תואמות" }))
+    } else {
+      setErrors((prev) => ({ ...prev, confirmPassword: "" }))
+    }
+  }, [formData.password, formData.confirmPassword])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -39,7 +82,7 @@ export default function SignUp() {
   const handleSelectChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      userType: value,
+      role: value,
     }))
   }
 
@@ -52,19 +95,61 @@ export default function SignUp() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setApiError("")
 
-    // In a real app, this would register with the server
-    // For now, we'll simulate a successful registration and redirect
+    // Check for validation errors before submitting
+    if (errors.password || errors.confirmPassword || formData.password !== formData.confirmPassword) {
+      return
+    }
 
-    if (formData.userType === "entrepreneur" || formData.userType === "borrower") {
-      router.push("/borrower/dashboard")
-    } else if (formData.userType === "credit-provider" || formData.userType === "financier") {
-      router.push("/financier/dashboard")
-    } else {
-      // Default fallback
-      router.push("/auth/sign-in")
+    setIsSubmitting(true)
+
+    try {
+      // Prepare the data for the API request
+      const signupData = {
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        // You can add other fields as needed by your API
+        fullName: formData.fullName,
+        idNumber: formData.idNumber,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+      }
+
+      // Send the POST request to the signup endpoint using axios
+      const response = await axios.post(`${API_BASE_URL}/auth/signup`, signupData)
+
+      console.log("User signed up:", response.data)
+
+      // Store the access token in localStorage
+      if (response.data.access_token) {
+        localStorage.setItem("access_token", response.data.access_token)
+      }
+
+      // Store user role if available
+      if (response.data.user && response.data.user.role) {
+        localStorage.setItem("user_role", response.data.user.role)
+      }
+
+      // Redirect based on user role
+      const userRole = response.data.user?.role || formData.role
+
+      if (userRole === "lawyer-notary" || userRole === "borrower") {
+        router.push("/borrower/dashboard")
+      } else if (userRole === "financier") {
+        router.push("/financier/dashboard")
+      } else {
+        // Default fallback
+        router.push("/auth/sign-in")
+      }
+    } catch (error) {
+      console.error("Signup error:", error)
+      setApiError(error.response?.data?.error || error.response?.data?.message || "שגיאה בהרשמה. אנא נסה שוב.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -76,6 +161,12 @@ export default function SignUp() {
           <CardDescription>צור חשבון חדש ב-OpenCredit</CardDescription>
         </CardHeader>
         <CardContent>
+          {apiError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{apiError}</AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -131,6 +222,42 @@ export default function SignUp() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="password">סיסמה</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="הכנס סיסמה"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.password && (
+                  <Alert variant="destructive" className="mt-2 py-2">
+                    <AlertDescription>{errors.password}</AlertDescription>
+                  </Alert>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">אימות סיסמה</Label>
+                <Input
+                  id="confirm-password"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="הכנס סיסמה שוב"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.confirmPassword && (
+                  <Alert variant="destructive" className="mt-2 py-2">
+                    <AlertDescription>{errors.confirmPassword}</AlertDescription>
+                  </Alert>
+                )}
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="address">כתובת מגורים</Label>
                 <Input
                   id="address"
@@ -145,13 +272,13 @@ export default function SignUp() {
 
               <div className="space-y-2">
                 <Label htmlFor="user-type">סוג משתמש</Label>
-                <Select value={formData.userType} onValueChange={handleSelectChange}>
+                <Select value={formData.role} onValueChange={handleSelectChange}>
                   <SelectTrigger id="user-type">
                     <SelectValue placeholder="בחר סוג משתמש" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="entrepreneur">יזם</SelectItem>
-                    <SelectItem value="credit-provider">נותן אשראי</SelectItem>
+                    <SelectItem value="borrower">יזם</SelectItem>
+                    <SelectItem value="financier">נותן אשראי</SelectItem>
                     <SelectItem value="lawyer-notary">עו"ד/נוטריון</SelectItem>
                   </SelectContent>
                 </Select>
@@ -176,8 +303,24 @@ export default function SignUp() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full mt-6">
-              הרשמה
+            <Button
+              type="submit"
+              className="w-full mt-6"
+              disabled={
+                isSubmitting ||
+                !!errors.password ||
+                !!errors.confirmPassword ||
+                formData.password !== formData.confirmPassword
+              }
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  מבצע הרשמה...
+                </span>
+              ) : (
+                "הרשמה"
+              )}
             </Button>
           </form>
         </CardContent>
