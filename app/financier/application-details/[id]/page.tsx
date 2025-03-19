@@ -145,7 +145,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
 
   try {
     // Send the data to the server using axios
-    const response = await axios.post('http://127.0.0.1:5000', offerData, {
+    const response = await axios.post('http://127.0.0.1:5000/offer/new', offerData, {
       headers: {
         'Content-Type': 'application/json',  // Ensure the server knows we're sending JSON
       },
