@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChatWidget } from "@/components/chat-widget"
 import { Send, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import axios from "axios"
 
 export default function ApplicationDetails({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -19,6 +20,8 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
   const [offerAmount, setOfferAmount] = useState<number | ''>('')
   const [interestRate, setInterestRate] = useState<number | ''>('')
   const [offerTerms, setOfferTerms] = useState<string>('')
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
+
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -132,12 +135,34 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
 
   const makeAnOffer = () => {
     alert("נשלחה הצעת הלוואה ודרישה לחתימה על מסמכים.")
-    const offerDetails = `
-      סכום המימון המוצע: ${offerAmount ? offerAmount : "לא הוזן"}
-      ריבית מוצעת: ${interestRate ? interestRate : "לא הוזן"}
-      תנאים נוספים: ${offerTerms || "לא הוזן"}
-    `;
-    alert(`נשלחה הצעת הלוואה עם הפרטים הבאים:\n\n${offerDetails}`);
+    const offerData = {
+      offerAmount,
+      interestRate,
+      offerTerms: offerTerms || "",  // Default to empty string if offerTerms is empty
+      requestId: params.id,
+    };
+    alert(`נשלחה הצעת הלוואה עם הפרטים הבאים:\n\n${offerData}`);
+
+  try {
+    // Send the data to the server using axios
+    const response = await axios.post('http://127.0.0.1:5000', offerData, {
+      headers: {
+        'Content-Type': 'application/json',  // Ensure the server knows we're sending JSON
+      },
+    });    
+  }
+    
+    if (response.status === 200) {
+      // Show a success alert
+      alert('ההצעה נשלחה בהצלחה!');
+    } else {
+      // Handle unexpected server response status
+      alert('משהו השתבש. לא ניתן לשלוח את ההצעה');
+    }
+  } catch (error) {
+    // Handle errors (e.g., network issues or server errors)
+    console.error('Error sending offer:', error);
+    alert('משהו השתבש. לא ניתן לשלוח את ההצעה');
   }
 
   const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
