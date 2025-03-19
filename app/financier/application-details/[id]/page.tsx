@@ -16,6 +16,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export default function ApplicationDetails({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [message, setMessage] = useState("")
+  const [offerAmount, setOfferAmount] = useState<number | ''>('')
+  const [interestRate, setInterestRate] = useState<number | ''>('')
+  const [offerTerms, setOfferTerms] = useState<string>('')
+  
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Enhanced messages state with more detailed structure
@@ -128,8 +132,26 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
 
   const makeAnOffer = () => {
     alert("נשלחה הצעת הלוואה ודרישה לחתימה על מסמכים.")
+    const offerDetails = `
+      סכום המימון המוצע: ${offerAmount ? offerAmount : "לא הוזן"}
+      ריבית מוצעת: ${interestRate ? interestRate : "לא הוזן"}
+      תנאים נוספים: ${offerTerms || "לא הוזן"}
+    `;
+    alert(`נשלחה הצעת הלוואה עם הפרטים הבאים:\n\n${offerDetails}`);
   }
 
+  const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOfferAmount(e.target.value ? parseFloat(e.target.value) : '')
+  }
+
+  const handleInterestRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInterestRate(e.target.value ? parseFloat(e.target.value) : '')
+  }
+
+  const handleOfferTermsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setOfferTerms(e.target.value)
+  }
+  
   // Initial chat messages
   const initialMessages = [
     {
@@ -352,20 +374,20 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="offerAmount">
                 סכום המימון המוצע:
               </label>
-              <Input id="offerAmount" type="number" placeholder="הכנס סכום" className="mb-4" />
+              <Input id="offerAmount" type="number" value={offerAmount} onChange={handleOfferAmountChange} placeholder="הכנס סכום" className="mb-4" />
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="interestRate">
                 ריבית מוצעת (%):
               </label>
-              <Input id="interestRate" type="number" step="0.1" placeholder="הכנס אחוז ריבית" className="mb-4" />
+              <Input id="interestRate" type="number" value={interestRate} onChange={handleInterestRateChange} step="0.1" placeholder="הכנס אחוז ריבית" className="mb-4" />
             </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="offerTerms">
               תנאים נוספים:
             </label>
-            <Textarea id="offerTerms" placeholder="פרט תנאים נוספים להצעה" rows={4} />
+            <Textarea id="offerTerms" value={offerTerms} {handleOfferTermsChange} placeholder="פרט תנאים נוספים להצעה" rows={4} />
           </div>
         </CardContent>
       </Card>
