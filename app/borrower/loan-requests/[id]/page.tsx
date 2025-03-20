@@ -10,10 +10,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Send, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import axios from "axios"
+import { use } from "react";
 
-export default function LoanRequestDetails({ params }: { params: { id: string } }) {
+
+export default function LoanRequestDetails({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
   const [message, setMessage] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [financiers, setFinanciers] = useState<any[]>([]);
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
+
 
   // Enhanced messages state with more detailed structure
   const [messages, setMessages] = useState([
@@ -58,7 +66,7 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
 
   // Mock data for the loan request
   const loanRequest = {
-    id: params.id,
+    id: id,
     companyName: 'חברת בנייה יוקרתית בע"מ',
     projectType: "מגורים",
     loanAmount: "5,000,000 ₪",
@@ -77,11 +85,6 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
       { name: "סטטוס התנגדויות", status: "missing" },
       { name: 'דו"ח אפס', status: "missing" },
       { name: "אישור ניהול חשבון", status: "missing" },
-    ],
-    financiers: [
-      { name: "מממן 1", status: "התקבל", percentage: 50 },
-      { name: "מממן 2", status: "בהמתנה", percentage: 25 },
-      { name: "מממן 3", status: "נדחה", percentage: 0 },
     ],
     progress: 66.66,
   }
@@ -117,6 +120,98 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
   }
+
+  const getOffers = async () => {
+
+    try {
+      // Send the data to the server using axios
+      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {
+
+      });    
+      if (response.status === 200) {
+        const data = response.data;
+
+        alert(JSON.stringify(data, null, 2));
+          
+        const selectedFinanciers = data.map((offer_data: any) => ({
+          name: offer_data.user_name,
+          status: mapStatus(offer_data.status),  // Assuming mapStatus is a function based on the interest_rate
+          intrestRate: offer_data.interest_rate,
+          percentage: (offer_data.offer_amount / parseInt(loanRequest.loanAmount.replace(/[^\d]/g, ""))) * 100,
+          repaymentPeriod: offer_data.repayment_period,
+          amount: offer_data.offer_amount,
+          id: offer_data.id 
+        }));
+
+        alert(JSON.stringify(selectedFinanciers, null, 2));
+
+        setFinanciers(selectedFinanciers);
+      }
+    } catch (error) {
+      // Handle errors (e.g., network issues or server errors)
+      
+    }
+  };
+
+  const mapStatus = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return 'בהמתנה'; // Pending
+      case "Accepted":
+        return 'התקבל'; // Accepted
+      case "Denied":
+        return 'נדחה'; // Denied
+      default:
+        return 'לא זמין'; // Default if status is not recognized
+    }
+  };
+
+
+  useEffect(() => {
+    getOffers();
+  }, [id]);
+
+  const approveOffer = async (id: string) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`);    
+      if (response.status === 200) {
+        
+        const updatedFinanciers = financiers.map((financier) =>
+          financier.id === id
+            ? { ...financier, status: "התקבל" }  // Update status of the specific financier
+            : financier
+        );
+
+        setFinanciers(updatedFinanciers);
+      }
+    } catch (error) {
+      // Handle errors (e.g., network issues or server errors)
+      alert("נכשל")
+      
+    }
+  };
+  
+
+  const rejectOffer = async (id: string) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`);    
+      if (response.status === 200) {
+        
+        const updatedFinanciers = financiers.map((financier) =>
+          financier.id === id
+            ? { ...financier, status: "נדחה" }  // Update status of the specific financier
+            : financier
+        );
+
+        setFinanciers(updatedFinanciers);
+      }
+    } catch (error) {
+      // Handle errors (e.g., network issues or server errors)
+      alert("נכשל")
+      
+    }
+
+  };
 
   return (
     <div>
@@ -207,7 +302,7 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
                   <CardTitle className="text-xl text-gray-800">הצעות מימון</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {loanRequest.financiers.map((financier, index) => (
+                  {financiers.map((financier, index) => (
                     <div key={index} className="text-sm mb-4">
                       <h3 className="font-semibold text-gray-700 mb-1">{financier.name}</h3>
                       <p className="text-gray-700 mb-1">
@@ -278,7 +373,7 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {loanRequest.financiers.map((financier, index) => (
+                {financiers.map((financier, index) => (
                   <div key={index} className="border-b pb-4 last:border-0">
                     <div className="flex items-center mb-2">
                       <Avatar className="h-10 w-10 ml-3">
@@ -329,19 +424,19 @@ export default function LoanRequestDetails({ params }: { params: { id: string } 
                       </div>
                       <div>
                         <p className="text-sm text-gray-700">
-                          <strong>ריבית מוצעת:</strong> {financier.percentage > 0 ? "4.5%" : "לא זמין"}
+                          <strong>ריבית מוצעת:</strong> {financier.intrestRate}%
                         </p>
                         <p className="text-sm text-gray-700">
-                          <strong>תקופת החזר:</strong> {financier.percentage > 0 ? "60 חודשים" : "לא זמין"}
+                          <strong>תקופת החזר:</strong> {financier.repaymentPeriod} חודשים
                         </p>
                       </div>
                     </div>
                     {financier.status === "בהמתנה" && (
                       <div className="mt-4 flex space-x-2 rtl:space-x-reverse">
-                        <Button variant="default" size="sm">
+                        <Button variant="default" size="sm" onClick={ () => approveOffer(financier.id)}>
                           קבל הצעה
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={ () => rejectOffer(financier.id)}>
                           דחה הצעה
                         </Button>
                       </div>
