@@ -506,5 +506,3 @@ export default function ApplicationDetails({ params }: { params: Promise<{ id: s
     </div>
   )
 }
-
- 
