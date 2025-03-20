@@ -70,27 +70,69 @@ export default function Marketplace() {
     company: "",
   })
 
+  // Track filtered data
+  const [filteredLoans, setFilteredLoans] = useState(mockLoans)
+
   const toggleView = () => {
     setViewType(viewType === "table" ? "cards" : "table")
   }
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [name]: value,
-    }))
+    }
+    setFilters(newFilters)
+    applyFilters(newFilters)
   }
 
   const handleSelectChange = (name: string, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [name]: value,
-    }))
+    }
+    setFilters(newFilters)
+    applyFilters(newFilters)
   }
 
   const handleSliderChange = (value: number[]) => {
     setMaxAmount(value[0])
+    applyFilters({ ...filters, maxAmount: value[0] })
+  }
+
+  const applyFilters = (currentFilters: any) => {
+    let results = [...mockLoans]
+
+    // Filter by project type
+    if (currentFilters.projectType && currentFilters.projectType !== "projectType") {
+      results = results.filter((loan) => loan.projectType === currentFilters.projectType)
+    }
+
+    // Filter by location (case insensitive partial match)
+    if (currentFilters.location) {
+      results = results.filter((loan) => loan.location.toLowerCase().includes(currentFilters.location.toLowerCase()))
+    }
+
+    // Filter by max amount
+    const maxAmountValue = currentFilters.maxAmount || maxAmount
+    results = results.filter((loan) => {
+      // Extract numeric value from amount string (e.g., "5,000,000 ₪" -> 5000000)
+      const numericAmount = Number(loan.amount.replace(/[^0-9]/g, ""))
+      return numericAmount <= maxAmountValue
+    })
+
+    // Filter by status
+    if (currentFilters.status && currentFilters.status !== "status") {
+      results = results.filter((loan) => loan.status === currentFilters.status)
+    }
+
+    // Filter by company name
+    if (currentFilters.company) {
+      results = results.filter((loan) => loan.companyName.toLowerCase().includes(currentFilters.company.toLowerCase()))
+    }
+
+    setFilteredLoans(results)
   }
 
   const openApplicationDetails = (id: string) => {
@@ -201,6 +243,29 @@ export default function Marketplace() {
             <Button onClick={toggleView}>{viewType === "table" ? "הצג ככרטיסיות" : "הצג כטבלה"}</Button>
           </div>
 
+          {filteredLoans.length === 0 && (
+            <div className="bg-white shadow-md rounded-lg p-6 text-center mb-4">
+              <p className="text-gray-600">לא נמצאו תוצאות התואמות את הסינון שלך</p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const resetFilters = {
+                    projectType: "",
+                    location: "",
+                    status: "",
+                    company: "",
+                  }
+                  setFilters(resetFilters)
+                  setMaxAmount(10000000)
+                  setFilteredLoans(mockLoans)
+                }}
+                className="mt-2"
+              >
+                נקה סינון
+              </Button>
+            </div>
+          )}
+
           {viewType === "table" ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
               <table className="min-w-full leading-normal">
@@ -230,7 +295,7 @@ export default function Marketplace() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockLoans.map((loan) => (
+                  {filteredLoans.map((loan) => (
                     <tr
                       key={loan.id}
                       onClick={() => openApplicationDetails(loan.id)}
@@ -272,7 +337,7 @@ export default function Marketplace() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockLoans.map((loan) => (
+              {filteredLoans.map((loan) => (
                 <Card
                   key={loan.id}
                   className="cursor-pointer hover:shadow-lg"

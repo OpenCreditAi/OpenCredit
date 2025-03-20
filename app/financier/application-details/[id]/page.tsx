@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import axios from "axios"
 import { use } from "react";
 import { resourceLimits } from "worker_threads"
+import { DocumentItem } from "@/components/document-item"
 
 export default function ApplicationDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -133,6 +134,18 @@ export default function ApplicationDetails({ params }: { params: Promise<{ id: s
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
+  }
+
+  const handleViewDocument = (docName: string) => {
+    console.log(`Viewing document: ${docName}`)
+    // Here you would implement the document viewing logic
+    alert(`מציג מסמך: ${docName}`)
+  }
+
+  const handleRequestDocument = (docName: string) => {
+    console.log(`Requesting document: ${docName}`)
+    // Here you would implement the document request logic
+    alert(`נשלחה בקשה למסמך: ${docName}`)
   }
 
   const requestMoreDocuments = () => {
@@ -256,7 +269,6 @@ export default function ApplicationDetails({ params }: { params: Promise<{ id: s
         <TabsList className="mb-4">
           <TabsTrigger value="details">פרטי בקשה</TabsTrigger>
           <TabsTrigger value="documents">מסמכים</TabsTrigger>
-          <TabsTrigger value="communication">תקשורת</TabsTrigger>
           <TabsTrigger value="chat">צ'אט</TabsTrigger>
         </TabsList>
 
@@ -331,51 +343,15 @@ export default function ApplicationDetails({ params }: { params: Promise<{ id: s
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {loanRequest.documents.map((doc, index) => (
-                  <div key={index} className="flex justify-between items-center p-2 border-b">
-                    <div>
-                      <h3 className="font-semibold text-gray-700">{doc.name}</h3>
-                      <span className={`text-xs ${doc.status === "uploaded" ? "text-green-600" : "text-red-600"}`}>
-                        {doc.status === "uploaded" ? "הועלה" : "חסר"}
-                      </span>
-                    </div>
-                    {doc.status === "uploaded" ? (
-                      <Button variant="outline" size="sm">
-                        הצג מסמך
-                      </Button>
-                    ) : (
-                      <Button variant="outline" size="sm" className="text-red-600">
-                        דרוש מסמך
-                      </Button>
-                    )}
-                  </div>
+                  <DocumentItem
+                    key={index}
+                    name={doc.name}
+                    status={doc.status as "uploaded" | "missing"}
+                    userType="financier"
+                    onView={() => handleViewDocument(doc.name)}
+                    onRequest={() => handleRequestDocument(doc.name)}
+                  />
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="communication">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl text-gray-800">הודעות</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="chat-container mb-4">
-                {messages.slice(0, 5).map((msg, index) => (
-                  <div key={index} className={`chat-message ${msg.sender === "borrower" ? "receiver" : "sender"}`}>
-                    {msg.text}
-                  </div>
-                ))}
-              </div>
-              <div className="flex">
-                <Input
-                  type="text"
-                  placeholder="הקלד הודעה..."
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="ml-2 mr-0" // Swap margin for RTL
-                />
-                <Button onClick={handleSendMessage}>שלח</Button>
               </div>
             </CardContent>
           </Card>
