@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import axios from "axios"
+import { decodeToken } from "../../../utils/auth";
+
 
 export default function SignIn() {
   const router = useRouter()
@@ -32,14 +34,15 @@ export default function SignIn() {
       })
 
       console.log("User signed in:", response.data)
-
+      const data = decodeToken(response.data.access_token)
       // Save token & role in localStorage
       localStorage.setItem("access_token", response.data.access_token)
-      localStorage.setItem("user_role", response.data.user.role) // Save role
+      const userRole = data.role
+      localStorage.setItem("user_role", userRole) // Save role
 
-      if (response.data.user.role == "borrower") {
+      if (userRole == "borrower") {
         router.push("/borrower/dashboard")
-      } else if (response.data.user.role == "financier") {
+      } else if (userRole == "financier") {
         router.push("/financier/dashboard")
       } else {
         console.log("unable to sign in")

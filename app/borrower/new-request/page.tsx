@@ -11,11 +11,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function NewLoanRequest() {
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
   const router = useRouter()
   const [formData, setFormData] = useState({
     projectName: "",
+    projectAddress: "",
+    projectType: "",
     loanAmount: "",
-    loanTerm: "",
     comments: "",
   })
 
@@ -52,11 +54,21 @@ export default function NewLoanRequest() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // In a real app, this would submit the form data to the server
-    // For now, we'll simulate a successful submission and redirect
+    const response = await fetch(`${API_BASE_URL}/loan/create_loan`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({
+        project_name: formData.projectName,
+        address: formData.projectAddress,
+        amount: formData.loanAmount,
+      }),
+    })
 
     router.push("/borrower/loan-requests")
   }
@@ -84,6 +96,32 @@ export default function NewLoanRequest() {
               </div>
 
               <div>
+                <Label htmlFor="projectAddress">כתובת הפרויקט:</Label>
+                <Input
+                  id="projectAddress"
+                  name="projectAddress"
+                  value={formData.projectAddress}
+                  onChange={handleInputChange}
+                  placeholder="הכנס כתובת הפרויקט"
+                  required
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="projectType">סוג הפרויקט:</Label>
+                <Input
+                  id="projectType"
+                  name="projectType"
+                  value={formData.projectType}
+                  onChange={handleInputChange}
+                  placeholder="הכנס סוג הפרויקט"
+                  required
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="loanAmount">סכום ההלוואה:</Label>
                 <Input
                   id="loanAmount"
@@ -92,19 +130,6 @@ export default function NewLoanRequest() {
                   value={formData.loanAmount}
                   onChange={handleInputChange}
                   placeholder="הכנס סכום הלוואה מבוקש"
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="loanTerm">משך החזר ההלוואה:</Label>
-                <Input
-                  id="loanTerm"
-                  name="loanTerm"
-                  value={formData.loanTerm}
-                  onChange={handleInputChange}
-                  placeholder="הכנס משך החזר הלוואה"
                   required
                   className="mt-1"
                 />
