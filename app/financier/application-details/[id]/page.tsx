@@ -12,11 +12,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChatWidget } from "@/components/chat-widget"
 import { Send, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import axios from "axios"
+import { use } from "react";
+import { resourceLimits } from "worker_threads"
 import { DocumentItem } from "@/components/document-item"
 
-export default function ApplicationDetails({ params }: { params: { id: string } }) {
+export default function ApplicationDetails({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
   const router = useRouter()
   const [message, setMessage] = useState("")
+  const [offerAmount, setOfferAmount] = useState<number | ''>('')
+  const [interestRate, setInterestRate] = useState<number | ''>('')
+  const [offerTerms, setOfferTerms] = useState<string>('')
+  const [repaymentPeriod, setRepaymentPeriod] = useState<number | ''>('');
+  const [error, setError] = useState<string | null>(null);
+  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
+
+  
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Enhanced messages state with more detailed structure
@@ -62,7 +75,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
 
   // Mock data for the loan request
   const loanRequest = {
-    id: params.id,
+    id: id,
     companyName: 'חברת בנייה יוקרתית בע"מ',
     projectType: "מגורים",
     loanAmount: "5,000,000 ₪",
@@ -139,10 +152,99 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
     alert("נשלחה בקשה למסמכים נוספים מהלווה.")
   }
 
-  const makeAnOffer = () => {
-    alert("נשלחה הצעת הלוואה ודרישה לחתימה על מסמכים.")
+  const makeAnOffer = async () => {
+
+    if (parseFloat(offerAmount.toString()) > parseFloat(loanRequest.loanAmount.replace(/[^\d.-]/g, "")) ||
+     parseFloat(offerAmount.toString()) < 1 || offerAmount == "" || isNaN(offerAmount)){
+      alert("הכנס סכום חוקי")
+      return
+    }
+
+    if (parseFloat(interestRate.toString()) <= 0 || interestRate == "" || isNaN(interestRate)){
+     alert("הכנס ריבית חוקית")
+     return
+   }
+
+   if (parseFloat(repaymentPeriod.toString()) <= 0 || repaymentPeriod == "" || isNaN(repaymentPeriod)){
+    alert("הכנס תקופת החזר חוקית")
+    return
   }
 
+
+    const token = localStorage.getItem("access_token")
+
+    const offerData = {
+      offerAmount,
+      interestRate,
+      offerTerms: offerTerms || "",
+      repaymentPeriod,
+      requestId: id,
+      token,
+    };
+    try {
+      // Send the data to the server using axios
+      const response = await axios.post(`${API_BASE_URL}/offer/new`, offerData, {
+        headers: {
+          'Content-Type': 'application/json',  // Ensure the server knows we're sending JSON
+        },
+      });    
+      if (response.status === 201) {
+      // Show a success alert
+        alert('ההצעה נשלחה בהצלחה!');
+        router.push("/financier/dashboard")
+      } else {
+        // Handle unexpected server response status
+        alert('משהו השתבש. לא ניתן לשלוח את ההצעה');
+      }
+    } catch (error) {
+      // Handle errors (e.g., network issues or server errors)
+      console.error('Error sending offer:', error);
+      alert('משהו השתבש. לא ניתן לשלוח את ההצעה');
+    }
+  }
+
+  const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numValue = parseFloat(value);
+
+    if (numValue > 0 || value === '') {
+      setOfferAmount(numValue);
+      setError(null);
+    } else {
+      setError('סכום המימון חייב להיות גדול מ-0');
+    }
+  }
+
+  const handleInterestRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //setInterestRate(e.target.value ? parseFloat(e.target.value) : '')
+
+    const value = e.target.value;
+    const numValue = parseFloat(value);
+
+    if (numValue >= 0 || value === '') {
+      setInterestRate(numValue);
+      setError(null);
+    } else {
+      setError('ריבית מוצעת חייבת להיות גדולה מ-0');
+    }
+  }
+
+  const handleRepaymentPeriodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numValue = parseFloat(value);
+
+    if (numValue > 0 || value === '') {
+      setRepaymentPeriod(numValue);
+      setError(null);
+    } else {
+      setError('תקופת ההחזר חייבת להיות גדולה מ-0');
+    }
+  };
+
+  const handleOfferTermsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setOfferTerms(e.target.value)
+  }
+  
   // Initial chat messages
   const initialMessages = [
     {
@@ -161,7 +263,7 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4 text-purple-800 text-center">פרטי בקשה #{params.id}</h1>
+      <h1 className="text-3xl font-bold mb-4 text-purple-800 text-center">פרטי בקשה #{id}</h1>
 
       <Tabs defaultValue="details" className="mb-6">
         <TabsList className="mb-4">
@@ -328,20 +430,26 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="offerAmount">
                 סכום המימון המוצע:
               </label>
-              <Input id="offerAmount" type="number" placeholder="הכנס סכום" className="mb-4" />
+              <Input id="offerAmount" type="number" value={offerAmount} onChange={handleOfferAmountChange} placeholder="הכנס סכום" className="mb-4" />
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="interestRate">
                 ריבית מוצעת (%):
               </label>
-              <Input id="interestRate" type="number" step="0.1" placeholder="הכנס אחוז ריבית" className="mb-4" />
+              <Input id="interestRate" type="number" value={interestRate} onChange={handleInterestRateChange} step="0.1" placeholder="הכנס אחוז ריבית" className="mb-4" />
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="repaymentPeriod">
+              תקופת החזר (חודשים):
+              </label>
+              <Input id="repaymentPeriod" type="number" value={repaymentPeriod} onChange={handleRepaymentPeriodChange} placeholder="הכנס תקופה (בחדשים)" className="mb-4" />
             </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="offerTerms">
               תנאים נוספים:
             </label>
-            <Textarea id="offerTerms" placeholder="פרט תנאים נוספים להצעה" rows={4} />
+            <Textarea id="offerTerms" value={offerTerms} onChange={handleOfferTermsChange} placeholder="פרט תנאים נוספים להצעה" rows={4} />
           </div>
         </CardContent>
       </Card>
@@ -374,4 +482,3 @@ export default function ApplicationDetails({ params }: { params: { id: string } 
     </div>
   )
 }
-
