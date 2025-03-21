@@ -43,7 +43,6 @@ export function Navbar({ userType }: NavbarProps) {
     userType === "borrower"
       ? [
           { name: "לוח מחוונים", href: "/borrower/dashboard", icon: "dashboard" },
-          { name: "בקשות הלוואה", href: "/borrower/loan-requests", icon: "requests" },
           { name: "בקשה חדשה", href: "/borrower/new-request", icon: "new" },
         ]
       : [

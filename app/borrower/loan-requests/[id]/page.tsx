@@ -1,58 +1,61 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Send, Paperclip } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DocumentItem } from "@/components/document-item"
-import axios from "axios"
-import { use } from "react";
+import { getLoan } from '@/app/api/loans/getLoan'
+import { Loan } from '@/app/api/loans/types'
+import { DocumentItem } from '@/components/document-item'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import axios from 'axios'
+import { Paperclip, Send } from 'lucide-react'
+import { use, useEffect, useRef, useState } from 'react'
 
+export default function LoanRequestDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params)
 
-export default function LoanRequestDetails({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const [financiers, setFinanciers] = useState<any[]>([]);
-  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
-
+  const [financiers, setFinanciers] = useState<any[]>([])
+  const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
 
   // Enhanced messages state with more detailed structure
   const [messages, setMessages] = useState([
     {
-      id: "1",
-      text: "שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.",
-      sender: "financier",
+      id: '1',
+      text: 'שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.',
+      sender: 'financier',
       timestamp: new Date(Date.now() - 3600000),
     },
     {
-      id: "2",
-      text: "בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?",
-      sender: "borrower",
+      id: '2',
+      text: 'בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?',
+      sender: 'borrower',
       timestamp: new Date(Date.now() - 3500000),
     },
     {
-      id: "3",
-      text: "האם יש מסמכים נוספים שאפשר להעלות?",
-      sender: "financier",
+      id: '3',
+      text: 'האם יש מסמכים נוספים שאפשר להעלות?',
+      sender: 'financier',
       timestamp: new Date(Date.now() - 3400000),
     },
     {
-      id: "4",
-      text: "כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב.",
-      sender: "borrower",
+      id: '4',
+      text: 'כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב.',
+      sender: 'borrower',
       timestamp: new Date(Date.now() - 3300000),
     },
     {
-      id: "5",
-      text: "תודה רבה",
-      sender: "financier",
+      id: '5',
+      text: 'תודה רבה',
+      sender: 'financier',
       timestamp: new Date(Date.now() - 3200000),
     },
   ])
@@ -60,34 +63,37 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages])
 
-  // Mock data for the loan request
-  const loanRequest = {
-    id: id,
-    companyName: 'חברת בנייה יוקרתית בע"מ',
-    projectType: "מגורים",
-    loanAmount: "5,000,000 ₪",
-    location: "פלורנטין, תל אביב",
-    daysLeft: 25,
-    status: "בטיפול",
-    documents: [
-      { name: "נסח טאבו עדכני", status: "uploaded" },
-      { name: "תקנון הבית המשותף", status: "uploaded" },
-      { name: 'הסכם התמ"א המקורי', status: "uploaded" },
-      { name: "רשימת הפרויקטים של היזם", status: "uploaded" },
-      { name: "תעודת התאגדות של החברה היזמית", status: "uploaded" },
-      { name: 'תוספות להסכם התמ"א', status: "uploaded" },
-      { name: "סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין", status: "uploaded" },
-      { name: "היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו", status: "uploaded" },
-      { name: "סטטוס התנגדויות", status: "missing" },
-      { name: 'דו"ח אפס', status: "missing" },
-      { name: "אישור ניהול חשבון", status: "missing" },
-    ],
-    progress: 66.66,
-  }
+  const [loanRequest, setLoanRequest] = useState<Loan>()
+
+  const fetchLoan = async () => setLoanRequest(await getLoan(id))
+
+  useEffect(() => {
+    fetchLoan()
+  }, [])
+
+  const documents = [
+    { name: 'נסח טאבו עדכני', status: 'uploaded' },
+    { name: 'תקנון הבית המשותף', status: 'uploaded' },
+    { name: 'הסכם התמ"א המקורי', status: 'uploaded' },
+    { name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
+    { name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
+    { name: 'תוספות להסכם התמ"א', status: 'uploaded' },
+    {
+      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
+      status: 'uploaded',
+    },
+    {
+      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
+      status: 'uploaded',
+    },
+    { name: 'סטטוס התנגדויות', status: 'missing' },
+    { name: 'דו"ח אפס', status: 'missing' },
+    { name: 'אישור ניהול חשבון', status: 'missing' },
+  ]
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,19 +103,19 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
       const newMessage = {
         id: Date.now().toString(),
         text: message,
-        sender: "borrower",
+        sender: 'borrower',
         timestamp: new Date(),
       }
 
       setMessages([...messages, newMessage])
-      setMessage("")
+      setMessage('')
 
       // Simulate a response (in a real app, this would be handled by the server)
       setTimeout(() => {
         const response = {
           id: (Date.now() + 1).toString(),
-          text: "תודה על המידע. האם יש לך שאלות נוספות לגבי ההצעה שלנו?",
-          sender: "financier",
+          text: 'תודה על המידע. האם יש לך שאלות נוספות לגבי ההצעה שלנו?',
+          sender: 'financier',
           timestamp: new Date(),
         }
         setMessages((prev) => [...prev, response])
@@ -118,100 +124,92 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
+    return date.toLocaleTimeString('he-IL', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
   }
 
   const getOffers = async () => {
-
     try {
       // Send the data to the server using axios
-      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {
-
-      });    
+      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {})
       if (response.status === 200) {
-        const data = response.data;
+        const data = response.data
 
-        alert(JSON.stringify(data, null, 2));
-          
+        alert(JSON.stringify(data, null, 2))
+
         const selectedFinanciers = data.map((offer_data: any) => ({
           name: offer_data.user_name,
-          status: mapStatus(offer_data.status),  // Assuming mapStatus is a function based on the interest_rate
+          status: mapStatus(offer_data.status), // Assuming mapStatus is a function based on the interest_rate
           intrestRate: offer_data.interest_rate,
-          percentage: (offer_data.offer_amount / parseInt(loanRequest.loanAmount.replace(/[^\d]/g, ""))) * 100,
+          percentage: (offer_data.offer_amount / loanRequest?.amount!) * 100,
           repaymentPeriod: offer_data.repayment_period,
           amount: offer_data.offer_amount,
-          id: offer_data.id 
-        }));
+          id: offer_data.id,
+        }))
 
-        alert(JSON.stringify(selectedFinanciers, null, 2));
+        alert(JSON.stringify(selectedFinanciers, null, 2))
 
-        setFinanciers(selectedFinanciers);
+        setFinanciers(selectedFinanciers)
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
-      
     }
-  };
+  }
 
   const mapStatus = (status: string) => {
     switch (status) {
-      case "Pending":
-        return 'בהמתנה'; // Pending
-      case "Accepted":
-        return 'התקבל'; // Accepted
-      case "Denied":
-        return 'נדחה'; // Denied
+      case 'Pending':
+        return 'בהמתנה' // Pending
+      case 'Accepted':
+        return 'התקבל' // Accepted
+      case 'Denied':
+        return 'נדחה' // Denied
       default:
-        return 'לא זמין'; // Default if status is not recognized
+        return 'לא זמין' // Default if status is not recognized
     }
-  };
-
+  }
 
   useEffect(() => {
-    getOffers();
-  }, [id]);
+    getOffers()
+  }, [id])
 
   const approveOffer = async (id: string) => {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`);    
+      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`)
       if (response.status === 200) {
-        
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
-            ? { ...financier, status: "התקבל" }  // Update status of the specific financier
+            ? { ...financier, status: 'התקבל' } // Update status of the specific financier
             : financier
-        );
+        )
 
-        setFinanciers(updatedFinanciers);
+        setFinanciers(updatedFinanciers)
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
-      alert("נכשל")
-      
+      alert('נכשל')
     }
-  };
-  
+  }
 
   const rejectOffer = async (id: string) => {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`);    
+      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`)
       if (response.status === 200) {
-        
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
-            ? { ...financier, status: "נדחה" }  // Update status of the specific financier
+            ? { ...financier, status: 'נדחה' } // Update status of the specific financier
             : financier
-        );
+        )
 
-        setFinanciers(updatedFinanciers);
+        setFinanciers(updatedFinanciers)
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
-      alert("נכשל")
-      
+      alert('נכשל')
     }
-
-  };
+  }
   const handleViewDocument = (docName: string) => {
     console.log(`Viewing document: ${docName}`)
     // Here you would implement the document viewing logic
@@ -228,51 +226,61 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
     // This is handled inside the DocumentItem component
   }
 
+  if (!loanRequest) {
+    return 'Loading...'
+  }
+
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4 text-purple-800 text-center">פרטי בקשה</h1>
+      <h1 className='text-3xl font-bold mb-4 text-purple-800 text-center'>
+        פרטי בקשה
+      </h1>
 
-      <Tabs defaultValue="details" className="mb-6">
-        <TabsList className="mb-4">
-          <TabsTrigger value="details">פרטי בקשה</TabsTrigger>
-          <TabsTrigger value="documents">מסמכים</TabsTrigger>
-          <TabsTrigger value="financiers">מממנים</TabsTrigger>
-          <TabsTrigger value="chat">צ'אט</TabsTrigger>
+      <Tabs defaultValue='details' className='mb-6'>
+        <TabsList className='mb-4'>
+          <TabsTrigger value='details'>פרטי בקשה</TabsTrigger>
+          <TabsTrigger value='documents'>מסמכים</TabsTrigger>
+          <TabsTrigger value='financiers'>מממנים</TabsTrigger>
+          <TabsTrigger value='chat'>צ'אט</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="details">
-          <div className="flex flex-wrap -mx-2">
+        <TabsContent value='details'>
+          <div className='flex flex-wrap -mx-2'>
             {/* Application Details */}
-            <div className="w-full md:w-1/2 px-2 mb-4">
-              <Card className="mb-4">
+            <div className='w-full md:w-1/2 px-2 mb-4'>
+              <Card className='mb-4'>
                 <CardHeader>
-                  <CardTitle className="text-xl text-gray-800">פרטי הבקשה</CardTitle>
+                  <CardTitle className='text-xl text-gray-800'>
+                    פרטי הבקשה
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
                     <div>
-                      <p className="text-gray-700 mb-1 text-sm">
+                      <p className='text-gray-700 mb-1 text-sm'>
                         <strong>שם חברה:</strong> {loanRequest.companyName}
                       </p>
-                      <p className="text-gray-700 mb-1 text-sm">
+                      <p className='text-gray-700 mb-1 text-sm'>
                         <strong>סוג פרויקט:</strong> {loanRequest.projectType}
                       </p>
-                      <p className="text-gray-700 mb-1 text-sm">
-                        <strong>סכום הלוואה:</strong> {loanRequest.loanAmount}
+                      <p className='text-gray-700 mb-1 text-sm'>
+                        <strong>סכום הלוואה:</strong> {loanRequest.amount}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-700 mb-1 text-sm">
+                      <p className='text-gray-700 mb-1 text-sm'>
                         <strong>מיקום:</strong> {loanRequest.location}
                       </p>
-                      <p className="text-gray-700 mb-1 text-sm">
-                        <strong>זמן שנותר:</strong> ימים {loanRequest.daysLeft}
+                      <p className='text-gray-700 mb-1 text-sm'>
+                        <strong>זמן שעבר:</strong> ימים {loanRequest.daysPassed}
                       </p>
-                      <p className="text-gray-700 mb-1 text-sm">
+                      <p className='text-gray-700 mb-1 text-sm'>
                         <strong>סטטוס:</strong>
-                        <span className="relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1">
-                          <span aria-hidden className="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                          <span className="relative">{loanRequest.status}</span>
+                        <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
+                          <span
+                            aria-hidden
+                            className='absolute inset-0 bg-green-200 opacity-50 rounded-full'></span>
+                          <span className='relative'>{loanRequest.status}</span>
                         </span>
                       </p>
                     </div>
@@ -283,26 +291,27 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
               {/* Progress Bar Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl text-gray-800">התקדמות</CardTitle>
+                  <CardTitle className='text-xl text-gray-800'>
+                    התקדמות
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="relative pt-1">
+                  <div className='relative pt-1'>
                     {/* Progress Bar with Labels */}
-                    <div className="flex mb-4">
-                      <div className="w-1/6 text-center">מעבדים את המסמכים</div>
-                      <div className="w-1/6 text-center">אוספים לך הצעות</div>
-                      <div className="w-1/6 text-center">בחירת הלוואה</div>
-                      <div className="w-1/6 text-center">מחכים לחתימות</div>
-                      <div className="w-1/6 text-center">הכסף בדרך אצלך</div>
-                      <div className="w-1/6 text-center">הכסף אצלך</div>
+                    <div className='flex mb-4'>
+                      <div className='w-1/6 text-center'>מעבדים את המסמכים</div>
+                      <div className='w-1/6 text-center'>אוספים לך הצעות</div>
+                      <div className='w-1/6 text-center'>בחירת הלוואה</div>
+                      <div className='w-1/6 text-center'>מחכים לחתימות</div>
+                      <div className='w-1/6 text-center'>הכסף בדרך אצלך</div>
+                      <div className='w-1/6 text-center'>הכסף אצלך</div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div className='w-full bg-gray-200 rounded-full h-2.5 mb-4'>
                       <div
-                        className="bg-purple-600 h-2.5 rounded-full"
-                        style={{ width: `${loanRequest.progress}%` }}
-                      ></div>
+                        className='bg-purple-600 h-2.5 rounded-full'
+                        style={{ width: `${loanRequest.progress}%` }}></div>
                     </div>
                   </div>
                 </CardContent>
@@ -310,41 +319,43 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
             </div>
 
             {/* Right Column */}
-            <div className="w-full md:w-1/2 px-2 mb-4">
+            <div className='w-full md:w-1/2 px-2 mb-4'>
               {/* Financier Acceptance Section */}
-              <Card className="mb-4">
+              <Card className='mb-4'>
                 <CardHeader>
-                  <CardTitle className="text-xl text-gray-800">הצעות מימון</CardTitle>
+                  <CardTitle className='text-xl text-gray-800'>
+                    הצעות מימון
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {financiers.map((financier, index) => (
-                    <div key={index} className="text-sm mb-4">
-                      <h3 className="font-semibold text-gray-700 mb-1">{financier.name}</h3>
-                      <p className="text-gray-700 mb-1">
+                    <div key={index} className='text-sm mb-4'>
+                      <h3 className='font-semibold text-gray-700 mb-1'>
+                        {financier.name}
+                      </h3>
+                      <p className='text-gray-700 mb-1'>
                         <strong>סטטוס:</strong>
                         <span
                           className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 ${
-                            financier.status === "התקבל"
-                              ? "text-green-900"
-                              : financier.status === "בהמתנה"
-                                ? "text-yellow-900"
-                                : "text-red-900"
-                          }`}
-                        >
+                            financier.status === 'התקבל'
+                              ? 'text-green-900'
+                              : financier.status === 'בהמתנה'
+                              ? 'text-yellow-900'
+                              : 'text-red-900'
+                          }`}>
                           <span
                             aria-hidden
                             className={`absolute inset-0 ${
-                              financier.status === "התקבל"
-                                ? "bg-green-200"
-                                : financier.status === "בהמתנה"
-                                  ? "bg-yellow-200"
-                                  : "bg-red-200"
-                            } opacity-50 rounded-full`}
-                          ></span>
-                          <span className="relative">{financier.status}</span>
+                              financier.status === 'התקבל'
+                                ? 'bg-green-200'
+                                : financier.status === 'בהמתנה'
+                                ? 'bg-yellow-200'
+                                : 'bg-red-200'
+                            } opacity-50 rounded-full`}></span>
+                          <span className='relative'>{financier.status}</span>
                         </span>
                       </p>
-                      <p className="text-gray-700 mb-1">
+                      <p className='text-gray-700 mb-1'>
                         <strong>אחוז מההלוואה:</strong> {financier.percentage}%
                       </p>
                     </div>
@@ -355,19 +366,21 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
           </div>
         </TabsContent>
 
-        <TabsContent value="documents">
+        <TabsContent value='documents'>
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl text-gray-800">מסמכים שהועלו</CardTitle>
+              <CardTitle className='text-xl text-gray-800'>
+                מסמכים שהועלו
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {loanRequest.documents.map((doc, index) => (
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                {documents.map((doc, index) => (
                   <DocumentItem
                     key={index}
                     name={doc.name}
-                    status={doc.status as "uploaded" | "missing"}
-                    userType="borrower"
+                    status={doc.status as 'uploaded' | 'missing'}
+                    userType='borrower'
                     onView={() => handleViewDocument(doc.name)}
                     onReplace={() => handleReplaceDocument(doc.name)}
                     onAdd={() => handleAddDocument(doc.name)}
@@ -378,77 +391,89 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
           </Card>
         </TabsContent>
 
-        <TabsContent value="financiers">
+        <TabsContent value='financiers'>
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl text-gray-800">פרטי מממנים</CardTitle>
+              <CardTitle className='text-xl text-gray-800'>
+                פרטי מממנים
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <div className='space-y-6'>
                 {financiers.map((financier, index) => (
-                  <div key={index} className="border-b pb-4 last:border-0">
-                    <div className="flex items-center mb-2">
-                      <Avatar className="h-10 w-10 ml-3">
-                        <AvatarImage src="/placeholder.svg?height=40&width=40" alt={financier.name} />
-                        <AvatarFallback className="bg-purple-100 text-purple-800">
+                  <div key={index} className='border-b pb-4 last:border-0'>
+                    <div className='flex items-center mb-2'>
+                      <Avatar className='h-10 w-10 ml-3'>
+                        <AvatarImage
+                          src='/placeholder.svg?height=40&width=40'
+                          alt={financier.name}
+                        />
+                        <AvatarFallback className='bg-purple-100 text-purple-800'>
                           {financier.name.substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-semibold text-gray-800">{financier.name}</h3>
-                        <p className="text-sm text-gray-500">מממן מורשה</p>
+                        <h3 className='font-semibold text-gray-800'>
+                          {financier.name}
+                        </h3>
+                        <p className='text-sm text-gray-500'>מממן מורשה</p>
                       </div>
                       <span
                         className={`mr-auto relative inline-block px-2 py-1 font-semibold leading-tight text-xs ${
-                          financier.status === "התקבל"
-                            ? "text-green-900"
-                            : financier.status === "בהמתנה"
-                              ? "text-yellow-900"
-                              : "text-red-900"
-                        }`}
-                      >
+                          financier.status === 'התקבל'
+                            ? 'text-green-900'
+                            : financier.status === 'בהמתנה'
+                            ? 'text-yellow-900'
+                            : 'text-red-900'
+                        }`}>
                         <span
                           aria-hidden
                           className={`absolute inset-0 ${
-                            financier.status === "התקבל"
-                              ? "bg-green-200"
-                              : financier.status === "בהמתנה"
-                                ? "bg-yellow-200"
-                                : "bg-red-200"
-                          } opacity-50 rounded-full`}
-                        ></span>
-                        <span className="relative">{financier.status}</span>
+                            financier.status === 'התקבל'
+                              ? 'bg-green-200'
+                              : financier.status === 'בהמתנה'
+                              ? 'bg-yellow-200'
+                              : 'bg-red-200'
+                          } opacity-50 rounded-full`}></span>
+                        <span className='relative'>{financier.status}</span>
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
                       <div>
-                        <p className="text-sm text-gray-700">
+                        <p className='text-sm text-gray-700'>
                           <strong>אחוז מימון:</strong> {financier.percentage}%
                         </p>
-                        <p className="text-sm text-gray-700">
-                          <strong>סכום מימון:</strong>{" "}
+                        <p className='text-sm text-gray-700'>
+                          <strong>סכום מימון:</strong>{' '}
                           {(
-                            (Number.parseInt(loanRequest.loanAmount.replace(/[^\d]/g, "")) * financier.percentage) /
+                            (loanRequest.amount * financier.percentage) /
                             100
-                          ).toLocaleString()}{" "}
+                          ).toLocaleString()}{' '}
                           ₪
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-700">
+                        <p className='text-sm text-gray-700'>
                           <strong>ריבית מוצעת:</strong> {financier.intrestRate}%
                         </p>
-                        <p className="text-sm text-gray-700">
-                          <strong>תקופת החזר:</strong> {financier.repaymentPeriod} חודשים
+                        <p className='text-sm text-gray-700'>
+                          <strong>תקופת החזר:</strong>{' '}
+                          {financier.repaymentPeriod} חודשים
                         </p>
                       </div>
                     </div>
-                    {financier.status === "בהמתנה" && (
-                      <div className="mt-4 flex space-x-2 rtl:space-x-reverse">
-                        <Button variant="default" size="sm" onClick={ () => approveOffer(financier.id)}>
+                    {financier.status === 'בהמתנה' && (
+                      <div className='mt-4 flex space-x-2 rtl:space-x-reverse'>
+                        <Button
+                          variant='default'
+                          size='sm'
+                          onClick={() => approveOffer(financier.id)}>
                           קבל הצעה
                         </Button>
-                        <Button variant="outline" size="sm" onClick={ () => rejectOffer(financier.id)}>
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          onClick={() => rejectOffer(financier.id)}>
                           דחה הצעה
                         </Button>
                       </div>
@@ -460,34 +485,51 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
           </Card>
         </TabsContent>
 
-        <TabsContent value="chat">
-          <Card className="h-[600px] flex flex-col">
-            <CardHeader className="border-b">
-              <div className="flex items-center">
-                <Avatar className="h-10 w-10 ml-3">
-                  <AvatarImage src="/placeholder.svg?height=40&width=40" alt="מממן 1" />
-                  <AvatarFallback className="bg-purple-100 text-purple-800">מ1</AvatarFallback>
+        <TabsContent value='chat'>
+          <Card className='h-[600px] flex flex-col'>
+            <CardHeader className='border-b'>
+              <div className='flex items-center'>
+                <Avatar className='h-10 w-10 ml-3'>
+                  <AvatarImage
+                    src='/placeholder.svg?height=40&width=40'
+                    alt='מממן 1'
+                  />
+                  <AvatarFallback className='bg-purple-100 text-purple-800'>
+                    מ1
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-xl text-gray-800">מממן 1</CardTitle>
-                  <p className="text-sm text-gray-500">מממן מורשה</p>
+                  <CardTitle className='text-xl text-gray-800'>
+                    מממן 1
+                  </CardTitle>
+                  <p className='text-sm text-gray-500'>מממן מורשה</p>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
+            <CardContent className='flex-1 overflow-y-auto p-4'>
+              <div className='space-y-4'>
                 {messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.sender === "borrower" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    key={msg.id}
+                    className={`flex ${
+                      msg.sender === 'borrower'
+                        ? 'justify-end'
+                        : 'justify-start'
+                    }`}>
                     <div
                       className={`max-w-[80%] rounded-lg p-3 ${
-                        msg.sender === "borrower" ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      <div className="text-sm">{msg.text}</div>
+                        msg.sender === 'borrower'
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                      <div className='text-sm'>{msg.text}</div>
                       <div
-                        className={`text-xs mt-1 ${msg.sender === "borrower" ? "text-purple-200" : "text-gray-500"}`}
-                      >
+                        className={`text-xs mt-1 ${
+                          msg.sender === 'borrower'
+                            ? 'text-purple-200'
+                            : 'text-gray-500'
+                        }`}>
                         {formatTime(msg.timestamp)}
                       </div>
                     </div>
@@ -497,22 +539,31 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
               </div>
             </CardContent>
 
-            <div className="p-4 border-t">
-              <form onSubmit={handleSendMessage} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Button type="button" variant="ghost" size="icon" className="rounded-full">
-                  <Paperclip className="h-5 w-5" />
-                  <span className="sr-only">צרף קובץ</span>
+            <div className='p-4 border-t'>
+              <form
+                onSubmit={handleSendMessage}
+                className='flex items-center space-x-2 rtl:space-x-reverse'>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='rounded-full'>
+                  <Paperclip className='h-5 w-5' />
+                  <span className='sr-only'>צרף קובץ</span>
                 </Button>
                 <Input
-                  type="text"
-                  placeholder="הקלד הודעה..."
+                  type='text'
+                  placeholder='הקלד הודעה...'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="flex-1"
+                  className='flex-1'
                 />
-                <Button type="submit" size="icon" className="rounded-full bg-purple-600">
-                  <Send className="h-5 w-5" />
-                  <span className="sr-only">שלח</span>
+                <Button
+                  type='submit'
+                  size='icon'
+                  className='rounded-full bg-purple-600'>
+                  <Send className='h-5 w-5' />
+                  <span className='sr-only'>שלח</span>
                 </Button>
               </form>
             </div>
@@ -522,4 +573,3 @@ export default function LoanRequestDetails({ params }: { params: Promise<{ id: s
     </div>
   )
 }
-
