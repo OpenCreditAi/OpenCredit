@@ -1,361 +1,417 @@
-'use client'
+"use client";
 
-import type React from 'react'
+import type React from "react";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+} from "@/components/ui/select";
 
 export default function NewLoanRequest() {
-  const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
-  const router = useRouter()
-  const [formData, setFormData] = useState({
-    projectName: '',
-    projectAddress: '',
-    projectType: '',
-    loanAmount: '',
-    comments: '',
-  })
+  const API_BASE_URL = "http://127.0.0.1:5000"; // Change if needed
+  const router = useRouter();
+  const [loanData, setLoanData] = useState({
+    projectName: "",
+    projectAddress: "",
+    projectType: "",
+    loanAmount: "",
+    comments: "",
+  });
 
   const [documents, setDocuments] = useState({
-    document1: null,
-    document2: null,
-    document3: null,
-    document4: null,
-    document5: null,
-    document6: null,
-    document7: null,
-    document8: null,
-    document9: null,
-    document10: null,
-    document11: null,
+    tabo_document: null,
+    united_home_document: null,
+    original_tama_document: null,
+    project_list_document: null,
+    company_crt_document: null,
+    tama_addons_document: null,
+    reject_status_document: null,
+    building_permit: null,
+    objection_status: null,
+    zero_document: null,
+    bank_account_confirm_document: null,
     additionalDocs: null,
-  })
+  });
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
+    const { name, value } = e.target;
+    setLoanData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target
+    const { name, files } = e.target;
     if (files) {
       setDocuments((prev) => ({
         ...prev,
         [name]: files[0],
-      }))
+      }));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    try {
+      // Step 1: Create the loan
+      const loanResponse = await fetch(`${API_BASE_URL}/loan/create_loan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          project_name: loanData.projectName,
+          address: loanData.projectAddress,
+          amount: loanData.loanAmount,
+        }),
+      });
 
-    const response = await fetch(`${API_BASE_URL}/loan/create_loan`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: JSON.stringify({
-        project_type: formData.projectType,
-        project_name: formData.projectName,
-        address: formData.projectAddress,
-        amount: formData.loanAmount,
-      }),
-    })
+      if (!loanResponse.ok) {
+        throw new Error("Failed to create loan");
+      }
 
-    router.push('/borrower/dashboard')
-  }
+      const loanResult = await loanResponse.json();
+      const loanId = loanResult.id; // Get the loan ID from the response
+
+      // Step 2: Upload files if any are selected
+      const hasFiles = Object.values(documents).some((file) => file !== null);
+      console.log("has files " + hasFiles);
+      console.log("loan id " + loanId);
+
+      if (hasFiles && loanId) {
+        const formData = new FormData();
+        formData.append("loan_id", loanId);
+
+        // Filter out null files and append them to formData
+        // Filter out null files and rename them using the key names
+        Object.entries(documents).forEach(([key, file]) => {
+          if (file) {
+            const fileExtension = file.name.split(".").pop(); // Get original file extension
+            const newFileName = `${key}.${fileExtension}`; // Rename file using key name
+            const renamedFile = new File([file], newFileName, {
+              type: file.type,
+            });
+
+            formData.append("files", renamedFile);
+          }
+        });
+        const fileResponse = await fetch(`${API_BASE_URL}/file/upload_files`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          body: formData,
+        });
+
+        if (!fileResponse.ok) {
+          console.error("Error uploading files:", await fileResponse.json());
+        }
+      }
+
+      // Step 3: Redirect to loan requests page
+      router.push("/borrower/dashboard");
+    } catch (error) {
+      console.error("Error submitting loan request:", error);
+      // Here you could show an error message to the user
+    }
+  };
 
   return (
     <div>
-      <h1 className='text-4xl font-bold mb-8 text-purple-800 text-center'>
+      <h1 className="text-4xl font-bold mb-8 text-purple-800 text-center">
         בקשת הלוואה
       </h1>
-      <p className='mb-8 text-lg text-gray-700 text-center'>
+      <p className="mb-8 text-lg text-gray-700 text-center">
         אנא מלאו את המידע הבא כדי להגיש בקשה להלוואה:
       </p>
 
       <Card>
-        <CardContent className='p-8'>
+        <CardContent className="p-8">
           <form onSubmit={handleSubmit}>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-6'>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div>
-                <Label htmlFor='projectName'>שם הפרויקט:</Label>
+                <Label htmlFor="projectName">שם הפרויקט:</Label>
                 <Input
-                  id='projectName'
-                  name='projectName'
-                  value={formData.projectName}
+                  id="projectName"
+                  name="projectName"
+                  value={loanData.projectName}
                   onChange={handleInputChange}
-                  placeholder='הכנס שם פרויקט'
+                  placeholder="הכנס שם פרויקט"
                   required
-                  className='mt-1'
+                  className="mt-1"
                 />
               </div>
 
               <div>
-                <Label htmlFor='projectAddress'>כתובת הפרויקט:</Label>
+                <Label htmlFor="projectAddress">כתובת הפרויקט:</Label>
                 <Input
-                  id='projectAddress'
-                  name='projectAddress'
-                  value={formData.projectAddress}
+                  id="projectAddress"
+                  name="projectAddress"
+                  value={loanData.projectAddress}
                   onChange={handleInputChange}
-                  placeholder='הכנס כתובת הפרויקט'
+                  placeholder="הכנס כתובת הפרויקט"
                   required
-                  className='mt-1'
+                  className="mt-1"
                 />
               </div>
 
               <div>
-                <Label htmlFor='projectType'>סוג הפרויקט:</Label>
+                <Label htmlFor="projectType">סוג הפרויקט:</Label>
                 <Select
-                  value={formData.projectType}
+                  value={loanData.projectType}
                   onValueChange={(value) =>
-                    setFormData((prev) => ({
+                    setLoanData((prev) => ({
                       ...prev,
                       projectType: value,
                     }))
-                  }>
-                  <SelectTrigger id='projectType' className='mt-1'>
-                    <SelectValue placeholder='בחר סוג פרויקט' />
+                  }
+                >
+                  <SelectTrigger id="projectType" className="mt-1">
+                    <SelectValue placeholder="בחר סוג פרויקט" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='projectType'>בחר סוג פרויקט</SelectItem>
-                    <SelectItem value='מגורים'>מגורים</SelectItem>
-                    <SelectItem value='מסחר'>מסחר</SelectItem>
-                    <SelectItem value='בנייה עצמית'>בנייה עצמית</SelectItem>
+                    <SelectItem value="projectType">בחר סוג פרויקט</SelectItem>
+                    <SelectItem value="מגורים">מגורים</SelectItem>
+                    <SelectItem value="מסחר">מסחר</SelectItem>
+                    <SelectItem value="בנייה עצמית">בנייה עצמית</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor='loanAmount'>סכום ההלוואה:</Label>
+                <Label htmlFor="loanAmount">סכום ההלוואה:</Label>
                 <Input
-                  id='loanAmount'
-                  name='loanAmount'
-                  type='number'
-                  value={formData.loanAmount}
+                  id="loanAmount"
+                  name="loanAmount"
+                  type="number"
+                  value={loanData.loanAmount}
                   onChange={handleInputChange}
-                  placeholder='הכנס סכום הלוואה מבוקש'
+                  placeholder="הכנס סכום הלוואה מבוקש"
                   required
-                  className='mt-1'
+                  className="mt-1"
                 />
               </div>
             </div>
 
-            <div className='mb-6 bg-purple-50 rounded-lg p-6'>
-              <h3 className='text-xl font-semibold text-purple-800 mb-4'>
+            <div className="mb-6 bg-purple-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-purple-800 mb-4">
                 העלאת מסמכים
               </h3>
-              <p className='text-gray-700 mb-6'>אנא העלה את המסמכים הבאים:</p>
+              <p className="text-gray-700 mb-6">אנא העלה את המסמכים הבאים:</p>
 
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <Label htmlFor='document1'>נסח טאבו עדכני:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document1'>
-                      {documents.document1
-                        ? documents.document1.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="tabo_document">נסח טאבו עדכני:</Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="tabo_document">
+                      {documents.tabo_document
+                        ? documents.tabo_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document1'
-                      name='document1'
-                      type='file'
+                      id="tabo_document"
+                      name="tabo_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document2'>תקנון הבית המשותף:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document2'>
-                      {documents.document2
-                        ? documents.document2.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="united_home_document">
+                    תקנון הבית המשותף:
+                  </Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="united_home_document">
+                      {documents.united_home_document
+                        ? documents.united_home_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document2'
-                      name='document2'
-                      type='file'
+                      id="united_home_document"
+                      name="united_home_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document3'>הסכם התמ"א המקורי:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document3'>
-                      {documents.document3
-                        ? documents.document3.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="original_tama_document">
+                    הסכם התמ"א המקורי:
+                  </Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="original_tama_document">
+                      {documents.original_tama_document
+                        ? documents.original_tama_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document3'
-                      name='document3'
-                      type='file'
+                      id="original_tama_document"
+                      name="original_tama_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document4'>רשימת הפרויקטים של היזם:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document4'>
-                      {documents.document4
-                        ? documents.document4.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="project_list_document">
+                    רשימת הפרויקטים של היזם:
+                  </Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="project_list_document">
+                      {documents.project_list_document
+                        ? documents.project_list_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document4'
-                      name='document4'
-                      type='file'
+                      id="project_list_document"
+                      name="project_list_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document5'>
+                  <Label htmlFor="company_crt_document">
                     תעודת התאגדות של החברה היזמית:
                   </Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document5'>
-                      {documents.document5
-                        ? documents.document5.name
-                        : 'בחר קובץ'}
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="company_crt_document">
+                      {documents.company_crt_document
+                        ? documents.company_crt_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document5'
-                      name='document5'
-                      type='file'
+                      id="company_crt_document"
+                      name="company_crt_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document6'>תוספות להסכם התמ"א:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document6'>
-                      {documents.document6
-                        ? documents.document6.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="tama_addons_document">
+                    תוספות להסכם התמ"א:
+                  </Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="tama_addons_document">
+                      {documents.tama_addons_document
+                        ? documents.tama_addons_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document6'
-                      name='document6'
-                      type='file'
+                      id="tama_addons_document"
+                      name="tama_addons_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document7'>
+                  <Label htmlFor="reject_status_document">
                     סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין:
                   </Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document7'>
-                      {documents.document7
-                        ? documents.document7.name
-                        : 'בחר קובץ'}
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="reject_status_document">
+                      {documents.reject_status_document
+                        ? documents.reject_status_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document7'
-                      name='document7'
-                      type='file'
+                      id="reject_status_document"
+                      name="reject_status_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document8'>
+                  <Label htmlFor="building_permit">
                     היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו:
                   </Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document8'>
-                      {documents.document8
-                        ? documents.document8.name
-                        : 'בחר קובץ'}
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="building_permit">
+                      {documents.building_permit
+                        ? documents.building_permit.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document8'
-                      name='document8'
-                      type='file'
+                      id="building_permit"
+                      name="building_permit"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document9'>סטטוס התנגדויות:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document9'>
-                      {documents.document9
-                        ? documents.document9.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="objection_status">סטטוס התנגדויות:</Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="objection_status">
+                      {documents.objection_status
+                        ? documents.objection_status.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document9'
-                      name='document9'
-                      type='file'
+                      id="objection_status"
+                      name="objection_status"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document10'>דו"ח אפס:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document10'>
-                      {documents.document10
-                        ? documents.document10.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="zero_document">דו"ח אפס:</Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="zero_document">
+                      {documents.zero_document
+                        ? documents.zero_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document10'
-                      name='document10'
-                      type='file'
+                      id="zero_document"
+                      name="zero_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor='document11'>אישור ניהול חשבון:</Label>
-                  <div className='input-file-container mt-1'>
-                    <label htmlFor='document11'>
-                      {documents.document11
-                        ? documents.document11.name
-                        : 'בחר קובץ'}
+                  <Label htmlFor="bank_account_confirm_document">
+                    אישור ניהול חשבון:
+                  </Label>
+                  <div className="input-file-container mt-1">
+                    <label htmlFor="bank_account_confirm_document">
+                      {documents.bank_account_confirm_document
+                        ? documents.bank_account_confirm_document.name
+                        : "בחר קובץ"}
                     </label>
                     <Input
-                      id='document11'
-                      name='document11'
-                      type='file'
+                      id="bank_account_confirm_document"
+                      name="bank_account_confirm_document"
+                      type="file"
                       onChange={handleFileChange}
                     />
                   </div>
@@ -363,37 +419,37 @@ export default function NewLoanRequest() {
               </div>
             </div>
 
-            <div className='mb-6'>
-              <Label htmlFor='comments'>הערות:</Label>
+            <div className="mb-6">
+              <Label htmlFor="comments">הערות:</Label>
               <Textarea
-                id='comments'
-                name='comments'
-                value={formData.comments}
+                id="comments"
+                name="comments"
+                value={loanData.comments}
                 onChange={handleInputChange}
-                placeholder='הוסף הערות לבקשת ההלוואה'
+                placeholder="הוסף הערות לבקשת ההלוואה"
                 rows={4}
-                className='mt-1'
+                className="mt-1"
               />
             </div>
 
-            <div className='mb-6'>
-              <h3 className='text-xl font-semibold text-purple-800 mb-4'>
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-purple-800 mb-4">
                 מסמכים נוספים
               </h3>
-              <p className='text-gray-700 mb-6'>העלה מסמכים נוספים אם יש:</p>
+              <p className="text-gray-700 mb-6">העלה מסמכים נוספים אם יש:</p>
 
               <div>
-                <Label htmlFor='additionalDocs'>
+                <Label htmlFor="additionalDocs">
                   בחר מסמכים נוספים להעלאה:
                 </Label>
-                <div className='input-file-container mt-1'>
-                  <label htmlFor='additionalDocs'>
-                    {documents.additionalDocs ? 'נבחרו קבצים' : 'בחר קבצים'}
+                <div className="input-file-container mt-1">
+                  <label htmlFor="additionalDocs">
+                    {documents.additionalDocs ? "נבחרו קבצים" : "בחר קבצים"}
                   </label>
                   <Input
-                    id='additionalDocs'
-                    name='additionalDocs'
-                    type='file'
+                    id="additionalDocs"
+                    name="additionalDocs"
+                    type="file"
                     multiple
                     onChange={handleFileChange}
                   />
@@ -401,8 +457,8 @@ export default function NewLoanRequest() {
               </div>
             </div>
 
-            <div className='flex justify-center mt-8'>
-              <Button type='submit' size='lg'>
+            <div className="flex justify-center mt-8">
+              <Button type="submit" size="lg">
                 הגש בקשה
               </Button>
             </div>
@@ -410,5 +466,5 @@ export default function NewLoanRequest() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
