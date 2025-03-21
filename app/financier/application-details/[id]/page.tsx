@@ -187,13 +187,13 @@ export default function ApplicationDetails({
     const token = localStorage.getItem('access_token')
 
     const offerData = {
-      offerAmount,
-      interestRate,
-      offerTerms: offerTerms || '',
-      repaymentPeriod,
-      requestId: id,
-      token,
+      offer_amount: offerAmount,
+      interest_rate: interestRate,
+      offer_terms: offerTerms || '',
+      repayment_period: repaymentPeriod,
+      loan_id: id,
     }
+
     try {
       // Send the data to the server using axios
       const response = await axios.post(
@@ -202,6 +202,7 @@ export default function ApplicationDetails({
         {
           headers: {
             'Content-Type': 'application/json', // Ensure the server knows we're sending JSON
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
           },
         }
       )

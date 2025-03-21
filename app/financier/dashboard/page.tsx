@@ -89,6 +89,7 @@ export default function FinancierDashboard() {
         <TabsList className='mb-4'>
           <TabsTrigger value='all'>כל הבקשות</TabsTrigger>
           <TabsTrigger value='processing'>בקשות בטיפול</TabsTrigger>
+          <TabsTrigger value='offered'>הצעות שהוגשו</TabsTrigger>
         </TabsList>
 
         <TabsContent value='all'>

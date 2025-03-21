@@ -132,12 +132,14 @@ export default function LoanRequestDetails({
 
   const getOffers = async () => {
     try {
-      // Send the data to the server using axios
-      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {})
+
+      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+      })
       if (response.status === 200) {
         const data = response.data
-
-        alert(JSON.stringify(data, null, 2))
 
         const selectedFinanciers = data.map((offer_data: any) => ({
           name: offer_data.user_name,
@@ -149,14 +151,18 @@ export default function LoanRequestDetails({
           id: offer_data.id,
         }))
 
-        alert(JSON.stringify(selectedFinanciers, null, 2))
-
         setFinanciers(selectedFinanciers)
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
     }
   }
+
+  useEffect(() => {
+    if (loanRequest) {
+      getOffers()
+    }
+  }, [loanRequest])
 
   const mapStatus = (status: string) => {
     switch (status) {
@@ -176,8 +182,13 @@ export default function LoanRequestDetails({
   }, [id])
 
   const approveOffer = async (id: string) => {
+
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`)
+      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+      })
       if (response.status === 200) {
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
@@ -189,13 +200,17 @@ export default function LoanRequestDetails({
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
-      alert('נכשל')
+      alert('failed to approve')
     }
   }
 
   const rejectOffer = async (id: string) => {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`)
+      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+      })
       if (response.status === 200) {
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
@@ -207,7 +222,7 @@ export default function LoanRequestDetails({
       }
     } catch (error) {
       // Handle errors (e.g., network issues or server errors)
-      alert('נכשל')
+      alert('failed to reject')
     }
   }
   const handleViewDocument = (docName: string) => {
@@ -445,11 +460,7 @@ export default function LoanRequestDetails({
                         </p>
                         <p className='text-sm text-gray-700'>
                           <strong>סכום מימון:</strong>{' '}
-                          {(
-                            (loanRequest.amount * financier.percentage) /
-                            100
-                          ).toLocaleString()}{' '}
-                          ₪
+                          {(financier.amount).toLocaleString()}₪{' '}
                         </p>
                       </div>
                       <div>
