@@ -18,7 +18,8 @@ export const convertLoan = (loan: any): Loan => {
     borrower = {
       id: loan.borrower.id,
       email: loan.borrower.email,
-      name: 'דודו',
+      name: loan.borrower.full_name,
+      phoneNumber: loan.borrower.phone_number,
     }
   }
 

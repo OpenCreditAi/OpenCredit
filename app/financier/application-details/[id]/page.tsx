@@ -324,10 +324,11 @@ export default function ApplicationDetails({
                     <strong>מיקום:</strong> {loanRequest.location}
                   </p>
                   <p className='text-gray-700'>
-                    <strong>זמן שעבר:</strong> ימים {loanRequest.daysPassed}
+                    <strong>זמן שעבר: </strong>
+                    {`${loanRequest.daysPassed} ימים`}
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>סטטוס:</strong>
+                  <p className='text-gray-700' dir='rtl'>
+                    <strong>סטטוס: </strong>
                     <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
                       <span
                         aria-hidden
@@ -355,10 +356,10 @@ export default function ApplicationDetails({
                     <strong>תפקיד:</strong> מנכ"ל
                   </p>
                   <p className='text-gray-700'>
-                    <strong>טלפון:</strong> 050-1234567
+                    <strong>טלפון:</strong> {loanRequest.borrower?.phoneNumber}
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>דוא"ל:</strong> {loanRequest.borrower?.email}
+                  <p className='text-gray-700' dir='rtl'>
+                    <strong>דוא"ל: </strong> {loanRequest.borrower?.email}
                   </p>
                   <p className='text-gray-700'>
                     <strong>ניסיון קודם:</strong> 10 פרויקטים דומים

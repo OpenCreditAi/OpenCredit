@@ -178,9 +178,9 @@ export default function BorrowerDashboard() {
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
               {loans.map((loan) => (
                 <Card key={loan.id}>
-                  <CardContent className='p-6'>
+                  <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>
-                      <strong>סטטוס:</strong>
+                      <strong>סטטוס: </strong>
                       <span
                         className={`relative inline-block px-3 py-1 font-semibold text-${loan.statusColor}-900 leading-tight ml-2`}>
                         <span
@@ -210,7 +210,8 @@ export default function BorrowerDashboard() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className='mb-4'>
-                      <strong>זמן שעבר:</strong> ימים {loan.daysPassed}
+                      <strong>זמן שעבר: </strong>
+                      {`${loan.daysPassed} ימים`}
                     </p>
                     <Link href={`/borrower/loan-requests/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
@@ -307,9 +308,9 @@ export default function BorrowerDashboard() {
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
               {getFilteredLoans('active').map((loan) => (
                 <Card key={loan.id}>
-                  <CardContent className='p-6'>
+                  <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>
-                      <strong>סטטוס:</strong>
+                      <strong>סטטוס: </strong>
                       <span
                         className={`relative inline-block px-3 py-1 font-semibold text-${loan.statusColor}-900 leading-tight ml-2`}>
                         <span
@@ -339,7 +340,8 @@ export default function BorrowerDashboard() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className='mb-4'>
-                      <strong>זמן שעבר:</strong> ימים {loan.daysPassed}
+                      <strong>זמן שעבר: </strong>
+                      {`${loan.daysPassed} ימים`}
                     </p>
                     <Link href={`/borrower/loan-requests/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
@@ -436,9 +438,9 @@ export default function BorrowerDashboard() {
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
               {getFilteredLoans('completed').map((loan) => (
                 <Card key={loan.id}>
-                  <CardContent className='p-6'>
+                  <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>
-                      <strong>סטטוס:</strong>
+                      <strong>סטטוס: </strong>
                       <span
                         className={`relative inline-block px-3 py-1 font-semibold text-${loan.statusColor}-900 leading-tight ml-2`}>
                         <span
@@ -468,7 +470,8 @@ export default function BorrowerDashboard() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className='mb-4'>
-                      <strong>זמן שעבר:</strong> ימים {loan.daysPassed}
+                      <strong>זמן שעבר: </strong>
+                      {`${loan.daysPassed} ימים`}
                     </p>
                     <Link href={`/borrower/loan-requests/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
