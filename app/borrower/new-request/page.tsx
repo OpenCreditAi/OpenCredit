@@ -75,6 +75,7 @@ export default function NewLoanRequest() {
         },
         body: JSON.stringify({
           project_name: loanData.projectName,
+          project_type: loanData.projectType,
           address: loanData.projectAddress,
           amount: loanData.loanAmount,
         }),
