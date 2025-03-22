@@ -2,7 +2,7 @@
 
 import type React from 'react'
 
-import { getLoans } from '@/app/api/loans/getLoans'
+import { getMarketplaceLoans } from '@/app/api/loans/getMarketplaceLoans'
 import { Loan } from '@/app/api/loans/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -35,10 +35,7 @@ export default function Marketplace() {
   const [loans, setLoans] = useState<Loan[]>([])
 
   const fetchLoans = async () => {
-    const newLoans = await getLoans()
-    // .filter((loan) =>
-    //   [LoanStatus.New, LoanStatus.GotOffers].includes(loan.status)
-    // )
+    const newLoans = await getMarketplaceLoans()
     setLoans(newLoans)
     setFilteredLoans(newLoans)
   }

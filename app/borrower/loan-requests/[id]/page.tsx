@@ -154,7 +154,7 @@ export default function LoanRequestDetails({
         const data = response.data
 
         const selectedFinanciers = data.map((offer_data: any) => ({
-          name: offer_data.user_name,
+          name: offer_data.organization_name,
           status: mapStatus(offer_data.status), // Assuming mapStatus is a function based on the interest_rate
           intrestRate: offer_data.interest_rate,
           percentage: (offer_data.offer_amount / loanRequest?.amount!) * 100,
@@ -309,7 +309,7 @@ export default function LoanRequestDetails({
                         <strong>זמן שעבר: </strong>
                         {`${loanRequest.daysPassed} ימים`}
                       </p>
-                      <p className='text-gray-700 mb-1 text-sm'>
+                      <p className='text-gray-700 mb-1 text-sm' dir='rtl'>
                         <strong>סטטוס:</strong>
                         <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
                           <span

@@ -25,7 +25,7 @@ export const convertLoan = (loan: any): Loan => {
 
   return {
     id: loan.id,
-    companyName: 'חברה טובה',
+    companyName: loan.organization_name,
     projectType: loan.project_type,
     projectName: loan.project_name,
     location: loan.address,
@@ -37,7 +37,7 @@ export const convertLoan = (loan: any): Loan => {
 }
 
 export const getLoan = async (id: string): Promise<Loan> => {
-  const response = await getAPI().get('loan/' + id)
+  const response = await getAPI().get(`/loans/${id}`)
 
   return convertLoan(JSON.parse(response.data).loan)
 }

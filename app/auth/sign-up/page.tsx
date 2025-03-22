@@ -117,6 +117,7 @@ export default function SignUp() {
         idNumber: formData.idNumber,
         phoneNumber: formData.phoneNumber,
         address: formData.address,
+        organizationName: 'חברה טובה'
       }
 
       // Send the POST request to the signup endpoint using axios
