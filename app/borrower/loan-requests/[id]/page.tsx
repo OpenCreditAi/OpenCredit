@@ -272,7 +272,8 @@ export default function LoanRequestDetails({
                         <strong>מיקום:</strong> {loanRequest.location}
                       </p>
                       <p className='text-gray-700 mb-1 text-sm'>
-                        <strong>זמן שעבר:</strong> ימים {loanRequest.daysPassed}
+                        <strong>זמן שעבר: </strong>
+                        {`${loanRequest.daysPassed} ימים`}
                       </p>
                       <p className='text-gray-700 mb-1 text-sm'>
                         <strong>סטטוס:</strong>

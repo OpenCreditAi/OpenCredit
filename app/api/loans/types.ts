@@ -27,6 +27,7 @@ export type Borrower = {
   id: string
   email: string
   name: string
+  phoneNumber: string
 }
 
 export const getLoanStatusDetails = (

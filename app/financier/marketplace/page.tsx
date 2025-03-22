@@ -350,9 +350,9 @@ export default function Marketplace() {
                   key={loan.id}
                   className='cursor-pointer hover:shadow-lg'
                   onClick={() => openApplicationDetails(loan.id)}>
-                  <CardContent className='p-6'>
+                  <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>
-                      <strong>סטטוס:</strong>
+                      <strong>סטטוס: </strong>
                       <span
                         className={`relative inline-block px-3 py-1 font-semibold text-${loan.statusColor}-900 leading-tight ml-2`}>
                         <span
@@ -382,7 +382,8 @@ export default function Marketplace() {
                       <strong>סכום הלוואה:</strong> {loan.amount}
                     </p>
                     <p className='mb-4'>
-                      <strong>זמן שעבר:</strong> ימים {loan.daysPassed}
+                      <strong>זמן שעבר: </strong>
+                      {`${loan.daysPassed} ימים`}
                     </p>
                     <Button className='w-full bg-purple-700 hover:bg-purple-800'>
                       הצג פרטים
