@@ -84,24 +84,18 @@ export default function ApplicationDetails({
     fetchLoan()
   }, [])
 
-  const documents = [
-    { name: 'נסח טאבו עדכני', status: 'uploaded' },
-    { name: 'תקנון הבית המשותף', status: 'uploaded' },
-    { name: 'הסכם התמ"א המקורי', status: 'uploaded' },
-    { name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
-    { name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
-    { name: 'תוספות להסכם התמ"א', status: 'uploaded' },
-    {
-      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
-      status: 'uploaded',
-    },
-    {
-      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
-      status: 'uploaded',
-    },
-    { name: 'סטטוס התנגדויות', status: 'missing' },
-    { name: 'דו"ח אפס', status: 'missing' },
-    { name: 'אישור ניהול חשבון', status: 'missing' },
+    const documents = [
+    { englishName: 'tabo_document', name: 'נסח טאבו עדכני', status: 'uploaded' },
+    {  englishName: 'united_home_document', name: 'תקנון הבית המשותף', status: 'uploaded' },
+    {  englishName: 'original_tama_document', name: 'הסכם התמ"א המקורי', status: 'uploaded' },
+    {  englishName: 'project_list_document', name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
+    {  englishName: 'company_crt_document', name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
+    {  englishName: 'tama_addons_document', name: 'תוספות להסכם התמ"א', status: 'uploaded' },
+    {  englishName: 'reject_status_document', name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',      status: 'uploaded',},
+    {  englishName: 'building_permit', name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו', status: 'uploaded', },
+    {  englishName: 'objection_status', name: 'סטטוס התנגדויות', status: 'missing' },
+    {  englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
+    {  englishName: 'bank_account_confirm_document', name: 'אישור ניהול חשבון', status: 'missing' },
   ]
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -384,6 +378,8 @@ export default function ApplicationDetails({
                     name={doc.name}
                     status={doc.status as 'uploaded' | 'missing'}
                     userType='financier'
+                    loanId={id}
+                    englishName={doc.englishName}
                     onView={() => handleViewDocument(doc.name)}
                     onRequest={() => handleRequestDocument(doc.name)}
                   />
