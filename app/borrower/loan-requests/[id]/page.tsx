@@ -132,10 +132,9 @@ export default function LoanRequestDetails({
 
   const getOffers = async () => {
     try {
-
       const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
       if (response.status === 200) {
@@ -182,13 +181,16 @@ export default function LoanRequestDetails({
   }, [id])
 
   const approveOffer = async (id: string) => {
-
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/accept/${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-      })
+      const response = await axios.patch(
+        `${API_BASE_URL}/offer/accept/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        }
+      )
       if (response.status === 200) {
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
@@ -206,11 +208,15 @@ export default function LoanRequestDetails({
 
   const rejectOffer = async (id: string) => {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/offer/reject/${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-      })
+      const response = await axios.patch(
+        `${API_BASE_URL}/offer/reject/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        }
+      )
       if (response.status === 200) {
         const updatedFinanciers = financiers.map((financier) =>
           financier.id === id
@@ -461,7 +467,7 @@ export default function LoanRequestDetails({
                         </p>
                         <p className='text-sm text-gray-700'>
                           <strong>סכום מימון:</strong>{' '}
-                          {(financier.amount).toLocaleString()}₪{' '}
+                          {financier.amount.toLocaleString()}₪{' '}
                         </p>
                       </div>
                       <div>
@@ -499,11 +505,11 @@ export default function LoanRequestDetails({
 
         <TabsContent value='chat'>
           <Card className='h-[600px] flex flex-col'>
-            <CardHeader className='border-b'>
+            <CardHeader className='border-b p-2' dir='rtl'>
               <div className='flex items-center'>
-                <Avatar className='h-10 w-10 ml-3'>
+                <Avatar className='ml-3 mr-1'>
                   <AvatarImage
-                    src='/placeholder.svg?height=40&width=40'
+                    src='/financier.png?height=40&width=40'
                     alt='מממן 1'
                   />
                   <AvatarFallback className='bg-purple-100 text-purple-800'>
@@ -535,7 +541,9 @@ export default function LoanRequestDetails({
                           ? 'bg-purple-600 text-white'
                           : 'bg-gray-100 text-gray-800'
                       }`}>
-                      <div className='text-sm'>{msg.text}</div>
+                      <div className='text-sm' dir='rtl'>
+                        {msg.text}
+                      </div>
                       <div
                         className={`text-xs mt-1 ${
                           msg.sender === 'borrower'
@@ -554,17 +562,18 @@ export default function LoanRequestDetails({
             <div className='p-4 border-t'>
               <form
                 onSubmit={handleSendMessage}
-                className='flex items-center space-x-2 rtl:space-x-reverse'>
+                className='flex items-center space-x-2 space-x-reverse'>
                 <Button
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='rounded-full'>
+                  className='rounded-full mr-2'>
                   <Paperclip className='h-5 w-5' />
                   <span className='sr-only'>צרף קובץ</span>
                 </Button>
                 <Input
                   type='text'
+                  dir='rtl'
                   placeholder='הקלד הודעה...'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -573,7 +582,7 @@ export default function LoanRequestDetails({
                 <Button
                   type='submit'
                   size='icon'
-                  className='rounded-full bg-purple-600'>
+                  className='rounded-full bg-purple-600 pt-0.5 pr-0.5'>
                   <Send className='h-5 w-5' />
                   <span className='sr-only'>שלח</span>
                 </Button>

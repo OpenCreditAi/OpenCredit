@@ -202,7 +202,7 @@ export default function ApplicationDetails({
         {
           headers: {
             'Content-Type': 'application/json', // Ensure the server knows we're sending JSON
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
         }
       )
@@ -396,11 +396,15 @@ export default function ApplicationDetails({
 
         <TabsContent value='chat'>
           <Card className='h-[600px] flex flex-col'>
-            <CardHeader className='border-b'>
+            <CardHeader className='border-b p-0' dir='rtl'>
               <div className='flex items-center'>
-                <Avatar className='h-10 w-10 ml-3'>
+                <Avatar
+                  style={{
+                    height: '4rem',
+                    width: '4rem',
+                  }}>
                   <AvatarImage
-                    src='/placeholder.svg?height=40&width=40'
+                    src='/borrower.png'
                     alt={loanRequest.borrower?.name}
                   />
                   <AvatarFallback className='bg-purple-100 text-purple-800'>
@@ -434,7 +438,9 @@ export default function ApplicationDetails({
                           ? 'bg-purple-600 text-white'
                           : 'bg-gray-100 text-gray-800'
                       }`}>
-                      <div className='text-sm'>{msg.text}</div>
+                      <div className='text-sm' dir='rtl'>
+                        {msg.text}
+                      </div>
                       <div
                         className={`text-xs mt-1 ${
                           msg.sender === 'financier'
@@ -453,17 +459,18 @@ export default function ApplicationDetails({
             <div className='p-4 border-t'>
               <form
                 onSubmit={handleSendMessage}
-                className='flex items-center space-x-2 rtl:space-x-reverse'>
+                className='flex items-center space-x-2 space-x-reverse'>
                 <Button
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='rounded-full'>
+                  className='rounded-full mr-2'>
                   <Paperclip className='h-5 w-5' />
                   <span className='sr-only'>צרף קובץ</span>
                 </Button>
                 <Input
                   type='text'
+                  dir='rtl'
                   placeholder='הקלד הודעה...'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -472,7 +479,7 @@ export default function ApplicationDetails({
                 <Button
                   type='submit'
                   size='icon'
-                  className='rounded-full bg-purple-600'>
+                  className='rounded-full bg-purple-600 pt-0.5 pr-0.5'>
                   <Send className='h-5 w-5' />
                   <span className='sr-only'>שלח</span>
                 </Button>
