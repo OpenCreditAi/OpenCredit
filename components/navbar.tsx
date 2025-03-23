@@ -43,7 +43,7 @@ export function Navbar({ userType }: NavbarProps) {
     userType === 'borrower'
       ? [
           {
-            name: 'לוח מחוונים',
+            name: 'דשבורד',
             href: '/borrower/dashboard',
             icon: 'dashboard',
           },
@@ -51,7 +51,7 @@ export function Navbar({ userType }: NavbarProps) {
         ]
       : [
           {
-            name: 'לוח מחוונים',
+            name: 'דשבורד',
             href: '/financier/dashboard',
             icon: 'dashboard',
           },
@@ -60,11 +60,11 @@ export function Navbar({ userType }: NavbarProps) {
             href: '/financier/marketplace',
             icon: 'search',
           },
-          {
-            name: 'בקשות בטיפול',
-            href: '/financier/in-process',
-            icon: 'process',
-          },
+          // {
+          //   name: 'בקשות בטיפול',
+          //   href: '/financier/in-process',
+          //   icon: 'process',
+          // },
         ]
 
   return (
@@ -87,7 +87,7 @@ export function Navbar({ userType }: NavbarProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <div className='hidden md:flex items-center space-x-1 rtl:space-x-reverse'>
+          <div className='hidden md:flex items-center space-x-1 space-x-reverse'>
             {navItems.map((item) => {
               const isActive = pathname === item.href
               return (

@@ -74,38 +74,59 @@ export default function LoanRequestDetails({
   useEffect(() => {
     fetchLoan()
   }, [])
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
 
   const documents = [
-    { englishName: 'tabo_document', name: 'נסח טאבו עדכני', status: 'uploaded' },
-    {  englishName: 'united_home_document', name: 'תקנון הבית המשותף', status: 'uploaded' },
-    {  englishName: 'original_tama_document', name: 'הסכם התמ"א המקורי', status: 'uploaded' },
-    {  englishName: 'project_list_document', name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
-    {  englishName: 'company_crt_document', name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
-    {  englishName: 'tama_addons_document', name: 'תוספות להסכם התמ"א', status: 'uploaded' },
-    {  englishName: 'reject_status_document', name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',      status: 'uploaded',},
-    {  englishName: 'building_permit', name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו', status: 'uploaded', },
-    {  englishName: 'objection_status', name: 'סטטוס התנגדויות', status: 'missing' },
-    {  englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {  englishName: 'bank_account_confirm_document', name: 'אישור ניהול חשבון', status: 'missing' },
+    {
+      englishName: 'tabo_document',
+      name: 'נסח טאבו עדכני',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'united_home_document',
+      name: 'תקנון הבית המשותף',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'original_tama_document',
+      name: 'הסכם התמ"א המקורי',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'project_list_document',
+      name: 'רשימת הפרויקטים של היזם',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'company_crt_document',
+      name: 'תעודת התאגדות של החברה היזמית',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'tama_addons_document',
+      name: 'תוספות להסכם התמ"א',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'reject_status_document',
+      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'building_permit',
+      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'objection_status',
+      name: 'סטטוס התנגדויות',
+      status: 'missing',
+    },
+    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
+    {
+      englishName: 'bank_account_confirm_document',
+      name: 'אישור ניהול חשבון',
+      status: 'missing',
+    },
   ]
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -496,7 +517,7 @@ export default function LoanRequestDetails({
                       </div>
                     </div>
                     {financier.status === 'בהמתנה' && (
-                      <div className='mt-4 flex space-x-2 rtl:space-x-reverse'>
+                      <div className='mt-4 flex space-x-2 space-x-reverse'>
                         <Button
                           variant='default'
                           size='sm'

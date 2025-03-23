@@ -130,7 +130,7 @@ export default function Marketplace() {
           <h1 className='text-2xl font-bold text-purple-800'>
             חיפוש בקשות הלוואות
           </h1>
-          <div className='space-x-4 rtl:space-x-reverse'>
+          <div className='space-x-4 space-x-reverse'>
             <Button
               variant='default'
               className='bg-purple-700 hover:bg-purple-900 text-yellow-200'>
