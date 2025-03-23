@@ -26,7 +26,6 @@ export default function LoanRequestDetails({
   const [financiers, setFinanciers] = useState<any[]>([])
   const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
 
-  // Enhanced messages state with more detailed structure
   const [messages, setMessages] = useState([
     {
       id: '1',
@@ -60,7 +59,6 @@ export default function LoanRequestDetails({
     },
   ])
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -68,53 +66,46 @@ export default function LoanRequestDetails({
   }, [messages])
 
   const [loanRequest, setLoanRequest] = useState<Loan>()
-
-  const fetchLoan = async () => setLoanRequest(await getLoan(id))
-
-  useEffect(() => {
-    fetchLoan()
-  }, [])
-
-  const documents = [
+  const [documents, setDocuments] = useState([
     {
       englishName: 'tabo_document',
       name: 'נסח טאבו עדכני',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'united_home_document',
       name: 'תקנון הבית המשותף',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'original_tama_document',
       name: 'הסכם התמ"א המקורי',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'project_list_document',
       name: 'רשימת הפרויקטים של היזם',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'company_crt_document',
       name: 'תעודת התאגדות של החברה היזמית',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'tama_addons_document',
       name: 'תוספות להסכם התמ"א',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'reject_status_document',
       name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'building_permit',
       name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
-      status: 'uploaded',
+      status: 'missing',
     },
     {
       englishName: 'objection_status',
@@ -127,13 +118,30 @@ export default function LoanRequestDetails({
       name: 'אישור ניהול חשבון',
       status: 'missing',
     },
-  ]
+  ])
+
+  const fetchLoan = async () => setLoanRequest(await getLoan(id))
+
+  useEffect(() => {
+    fetchLoan()
+  }, [])
+
+  useEffect(() => {
+    if (loanRequest) {
+      const updatedDocuments = documents.map((doc) => ({
+        ...doc,
+        status: loanRequest.file_names.includes(doc.englishName)
+          ? 'uploaded'
+          : 'missing',
+      }))
+      setDocuments(updatedDocuments)
+    }
+  }, [loanRequest])
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (message.trim()) {
-      // Add the new message to the chat
       const newMessage = {
         id: Date.now().toString(),
         text: message,
@@ -144,7 +152,6 @@ export default function LoanRequestDetails({
       setMessages([...messages, newMessage])
       setMessage('')
 
-      // Simulate a response (in a real app, this would be handled by the server)
       setTimeout(() => {
         const response = {
           id: (Date.now() + 1).toString(),
@@ -272,14 +279,25 @@ export default function LoanRequestDetails({
   }
 
   const handleReplaceDocument = (docName: string) => {
-    console.log(`Document replaced: ${docName}`)
     // This is handled inside the DocumentItem component
+    console.log(`Document replaced: ${docName}`)
+    try {
+      fetchLoan() // Refresh loan data after replacement
+      console.log('Loan data refreshed after document replacement')
+    } catch (error) {
+      console.error('Failed to refresh loan data:', error)
+    }
   }
 
   const handleAddDocument = (docName: string) => {
     console.log(`Document added: ${docName}`)
-    // This is handled inside the DocumentItem component
-  }
+    
+    try {
+      fetchLoan() // Refresh loan data after replacement
+      console.log('Loan data refreshed after document addition')
+    } catch (error) {
+      console.error('Failed to refresh loan data:', error)
+    }  }
 
   if (!loanRequest) {
     return 'Loading...'

@@ -68,19 +68,39 @@ export function DocumentItem({
 
     // Create a file input and trigger it
     const input = document.createElement("input");
+    const formData = new FormData();
     input.type = "file";
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
+        const fileExtension = file.name.split(".").pop(); // Get original file extension
+        const newFileName = `${englishName}.${fileExtension}`; // Rename file using key name
+        const renamedFile = new File([file], newFileName, {
+          type: file.type,
+        });
         console.log(`Selected file: ${file.name} for document: ${name}`);
         // Here you would handle the file upload
-        alert(`המסמך "${name}" הוחלף בהצלחה עם הקובץ "${file.name}"`);
-        if (onReplace) onReplace();
+        formData.append("files", renamedFile);
+        formData.append("loan_id", loanId);
+
+        const fileResponse = await fetch(`${API_BASE_URL}/file/upload_files`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          body: formData,
+        });
+
+        if (!fileResponse.ok) {
+          console.error("Error uploading files:", await fileResponse.json());
+        } else {
+          onReplace?.();
+        }
       }
     };
     input.click();
-  };
 
+  };
   const handleAddDocument = (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -111,6 +131,8 @@ export function DocumentItem({
 
         if (!fileResponse.ok) {
           console.error("Error uploading files:", await fileResponse.json());
+        } else {
+          onAdd?.();
         }
       }
     };

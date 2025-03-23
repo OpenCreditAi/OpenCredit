@@ -32,6 +32,7 @@ export const convertLoan = (loan: any): Loan => {
     amount: loan.amount,
     borrower,
     daysPassed: calculateDaysPassed(loan.created_at),
+    file_names: loan.file_names,
     ...getLoanStatusDetails(getRandomLoanStatus()),
   }
 }
