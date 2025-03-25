@@ -69,7 +69,7 @@ export default function BorrowerDashboard() {
                 סכום הלוואה כולל
               </div>
               <div className='text-2xl font-bold text-gray-800'>
-                ₪ {loans.reduce((sum, loan) => sum + loan.amount, 0)}
+                {loans.reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}₪{' '}
               </div>
             </div>
             <div className='text-center'>
@@ -157,7 +157,7 @@ export default function BorrowerDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
@@ -207,7 +207,7 @@ export default function BorrowerDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
@@ -284,7 +284,7 @@ export default function BorrowerDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
@@ -337,7 +337,7 @@ export default function BorrowerDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
@@ -414,7 +414,7 @@ export default function BorrowerDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
@@ -467,7 +467,7 @@ export default function BorrowerDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>

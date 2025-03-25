@@ -65,7 +65,7 @@ export default function FinancierDashboard() {
                 סכום הלוואה כולל
               </div>
               <div className='text-2xl font-bold text-gray-800'>
-                ₪ {loans.reduce((sum, loan) => sum + loan.amount, 0)}
+                {loans.reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}₪{' '}
               </div>
             </div>
             <div className='text-center'>
@@ -153,14 +153,14 @@ export default function FinancierDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <Link
-                          href={`/financier/application-details/${loan.id}`}>
+                          href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -207,13 +207,13 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
                       {`${loan.daysPassed} ימים`}
                     </p>
-                    <Link href={`/financier/application-details/${loan.id}`}>
+                    <Link href={`/financier/offer-details/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
                     </Link>
                   </CardContent>
@@ -284,14 +284,14 @@ export default function FinancierDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <Link
-                          href={`/financier/application-details/${loan.id}`}>
+                          href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -338,13 +338,13 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
                       {`${loan.daysPassed} ימים`}
                     </p>
-                    <Link href={`/financier/application-details/${loan.id}`}>
+                    <Link href={`/financier/offer-details/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
                     </Link>
                   </CardContent>
@@ -415,14 +415,14 @@ export default function FinancierDashboard() {
                         {loan.location}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        {loan.amount}
+                        {loan.amount.toLocaleString()}₪{' '}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <Link
-                          href={`/financier/application-details/${loan.id}`}>
+                          href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -469,13 +469,13 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount}
+                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
                       {`${loan.daysPassed} ימים`}
                     </p>
-                    <Link href={`/financier/application-details/${loan.id}`}>
+                    <Link href={`/financier/offer-details/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
                     </Link>
                   </CardContent>

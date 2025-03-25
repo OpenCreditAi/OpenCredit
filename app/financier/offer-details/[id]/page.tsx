@@ -4,7 +4,7 @@ import type React from 'react'
 
 import { getLoan } from '@/app/api/loans/getLoan'
 import { Loan } from '@/app/api/loans/types'
-import { DocumentItem } from '@/components/document-item'
+import { DocumentItem, } from '@/components/document-item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -173,7 +173,7 @@ export default function LoanRequestDetails({
 
   const getOffers = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/offer/get/${id}`, {
+      const response = await axios.get(`${API_BASE_URL}/offer/get/org/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -221,57 +221,6 @@ export default function LoanRequestDetails({
     getOffers()
   }, [id])
 
-  const approveOffer = async (id: string) => {
-    try {
-      const response = await axios.patch(
-        `${API_BASE_URL}/offer/accept/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        }
-      )
-      if (response.status === 200) {
-        const updatedFinanciers = financiers.map((financier) =>
-          financier.id === id
-            ? { ...financier, status: 'התקבל' } // Update status of the specific financier
-            : financier
-        )
-
-        setFinanciers(updatedFinanciers)
-      }
-    } catch (error) {
-      // Handle errors (e.g., network issues or server errors)
-      alert('failed to approve')
-    }
-  }
-
-  const rejectOffer = async (id: string) => {
-    try {
-      const response = await axios.patch(
-        `${API_BASE_URL}/offer/reject/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        }
-      )
-      if (response.status === 200) {
-        const updatedFinanciers = financiers.map((financier) =>
-          financier.id === id
-            ? { ...financier, status: 'נדחה' } // Update status of the specific financier
-            : financier
-        )
-
-        setFinanciers(updatedFinanciers)
-      }
-    } catch (error) {
-      // Handle errors (e.g., network issues or server errors)
-      alert('failed to reject')
-    }
-  }
   const handleViewDocument = (docName: string) => {
     console.log(`Viewing document: ${docName}`)
     // Here you would implement the document viewing logic
@@ -337,7 +286,7 @@ export default function LoanRequestDetails({
                         <strong>סוג פרויקט:</strong> {loanRequest.projectType}
                       </p>
                       <p className='text-gray-700 mb-1 text-sm'>
-                        <strong>סכום הלוואה:</strong> {loanRequest.amount}
+                        <strong>סכום הלוואה:</strong> {loanRequest.amount.toLocaleString()}₪{' '}
                       </p>
                     </div>
                     <div>
@@ -357,35 +306,6 @@ export default function LoanRequestDetails({
                           <span className='relative'>{loanRequest.status}</span>
                         </span>
                       </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Progress Bar Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='text-xl text-gray-800'>
-                    התקדמות
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='relative pt-1'>
-                    {/* Progress Bar with Labels */}
-                    <div className='flex mb-4'>
-                      <div className='w-1/6 text-center'>מעבדים את המסמכים</div>
-                      <div className='w-1/6 text-center'>אוספים לך הצעות</div>
-                      <div className='w-1/6 text-center'>בחירת הלוואה</div>
-                      <div className='w-1/6 text-center'>מחכים לחתימות</div>
-                      <div className='w-1/6 text-center'>הכסף בדרך אצלך</div>
-                      <div className='w-1/6 text-center'>הכסף אצלך</div>
-                    </div>
-
-                    {/* Progress bar */}
-                    <div className='w-full bg-gray-200 rounded-full h-2.5 mb-4'>
-                      <div
-                        className='bg-purple-600 h-2.5 rounded-full'
-                        style={{ width: `${loanRequest.progress}%` }}></div>
                     </div>
                   </div>
                 </CardContent>
@@ -454,7 +374,7 @@ export default function LoanRequestDetails({
                     key={index}
                     name={doc.name}
                     status={doc.status as 'uploaded' | 'missing'}
-                    userType='borrower'
+                    userType='financier'
                     loanId={id}
                     englishName={doc.englishName}
                     onView={() => handleViewDocument(doc.name)}
@@ -534,22 +454,6 @@ export default function LoanRequestDetails({
                         </p>
                       </div>
                     </div>
-                    {financier.status === 'בהמתנה' && (
-                      <div className='mt-4 flex space-x-2 space-x-reverse'>
-                        <Button
-                          variant='default'
-                          size='sm'
-                          onClick={() => approveOffer(financier.id)}>
-                          קבל הצעה
-                        </Button>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          onClick={() => rejectOffer(financier.id)}>
-                          דחה הצעה
-                        </Button>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>

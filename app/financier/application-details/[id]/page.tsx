@@ -312,7 +312,7 @@ export default function ApplicationDetails({
                     <strong>סוג פרויקט:</strong> {loanRequest.projectType}
                   </p>
                   <p className='text-gray-700'>
-                    <strong>סכום הלוואה:</strong> {loanRequest.amount}
+                    <strong>סכום הלוואה:</strong> {loanRequest.amount.toLocaleString()}₪{' '}
                   </p>
                   <p className='text-gray-700'>
                     <strong>מיקום:</strong> {loanRequest.location}
