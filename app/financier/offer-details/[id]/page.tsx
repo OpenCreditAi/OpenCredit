@@ -327,7 +327,7 @@ export default function LoanRequestDetails({
                       <h3 className='font-semibold text-gray-700 mb-1'>
                         {financier.name}
                       </h3>
-                      <p className='text-gray-700 mb-1'>
+                      <p className='text-gray-700 mb-1' dir="rtl">
                         <strong>סטטוס:</strong>
                         <span
                           className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 ${
