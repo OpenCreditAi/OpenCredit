@@ -4,7 +4,7 @@ import type React from 'react'
 
 import { getLoan } from '@/app/api/loans/getLoan'
 import { Loan } from '@/app/api/loans/types'
-import { DocumentItem, DocumentItemStatic } from '@/components/document-item'
+import { DocumentItem, } from '@/components/document-item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -370,7 +370,7 @@ export default function LoanRequestDetails({
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 {documents.map((doc, index) => (
-                  <DocumentItemStatic
+                  <DocumentItem
                     key={index}
                     name={doc.name}
                     status={doc.status as 'uploaded' | 'missing'}
