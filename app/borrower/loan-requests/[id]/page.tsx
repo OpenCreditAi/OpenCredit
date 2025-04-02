@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loan } from '@/types/Loan'
+import { getDocumentCategories } from '@/utils/getDocumentCategories'
 import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { use, useEffect, useRef, useState } from 'react'
@@ -66,59 +67,15 @@ export default function LoanRequestDetails({
   }, [messages])
 
   const [loanRequest, setLoanRequest] = useState<Loan>()
-  const [documents, setDocuments] = useState([
-    {
-      englishName: 'tabo_document',
-      name: 'נסח טאבו עדכני',
-      status: 'missing',
-    },
-    {
-      englishName: 'united_home_document',
-      name: 'תקנון הבית המשותף',
-      status: 'missing',
-    },
-    {
-      englishName: 'original_tama_document',
-      name: 'הסכם התמ"א המקורי',
-      status: 'missing',
-    },
-    {
-      englishName: 'project_list_document',
-      name: 'רשימת הפרויקטים של היזם',
-      status: 'missing',
-    },
-    {
-      englishName: 'company_crt_document',
-      name: 'תעודת התאגדות של החברה היזמית',
-      status: 'missing',
-    },
-    {
-      englishName: 'tama_addons_document',
-      name: 'תוספות להסכם התמ"א',
-      status: 'missing',
-    },
-    {
-      englishName: 'reject_status_document',
-      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
-      status: 'missing',
-    },
-    {
-      englishName: 'building_permit',
-      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
-      status: 'missing',
-    },
-    {
-      englishName: 'objection_status',
-      name: 'סטטוס התנגדויות',
-      status: 'missing',
-    },
-    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {
-      englishName: 'bank_account_confirm_document',
-      name: 'אישור ניהול חשבון',
-      status: 'missing',
-    },
-  ])
+  const [documents, setDocuments] = useState(
+    getDocumentCategories().map((documentCategory) => {
+      return {
+        englishName: documentCategory.id,
+        name: documentCategory.description,
+        status: 'missing',
+      }
+    })
+  )
 
   const fetchLoan = async () => setLoanRequest(await getLoan(id))
 
