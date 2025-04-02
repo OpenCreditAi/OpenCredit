@@ -1,5 +1,6 @@
 'use client'
 
+import { getUserDetails } from '@/app/api/user/getUserDetails'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,19 +12,57 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Bell, LogOut, Menu, Settings, User, UserCircle, X } from 'lucide-react'
+import { useUserStore } from '@/stores/userStore'
+import { User } from '@/types/User'
+import {
+  Bell,
+  LogOut,
+  Menu,
+  Settings,
+  UserCircle,
+  User as UserLogo,
+  X,
+} from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import Loading from './ui/loading'
 
 interface NavbarProps {
-  userType: 'borrower' | 'financier'
+  userType: User['role']
 }
 
 export function Navbar({ userType }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { user, setUser, clearUser } = useUserStore()
+
+  const fetchUserDetails = async () => {
+    if (!user) {
+      const newUser = await getUserDetails()
+
+      if (newUser === null) {
+        router.push('/auth/sign-in')
+      } else {
+        setUser(newUser)
+
+        if (newUser.role !== userType) {
+          router.push(`/${newUser.role}/dashboard`)
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchUserDetails()
+  }, [])
+
+  const logOut = () => {
+    localStorage.removeItem('access_token')
+    clearUser()
+  }
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -66,6 +105,10 @@ export function Navbar({ userType }: NavbarProps) {
           //   icon: 'process',
           // },
         ]
+
+  if (user === null) {
+    return <Loading />
+  }
 
   return (
     <nav
@@ -116,7 +159,7 @@ export function Navbar({ userType }: NavbarProps) {
                   </Badge>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-80'>
+              <DropdownMenuContent align='start' className='w-80'>
                 <DropdownMenuLabel>התראות</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <div className='max-h-[300px] overflow-y-auto'>
@@ -161,12 +204,12 @@ export function Navbar({ userType }: NavbarProps) {
                       alt='User'
                     />
                     <AvatarFallback className='bg-purple-100 text-purple-800'>
-                      <User className='h-5 w-5' />
+                      <UserLogo className='h-5 w-5' />
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-56'>
+              <DropdownMenuContent align='start' className='w-75'>
                 <div dir='rtl' className='flex items-center justify-start p-2'>
                   <div className='flex-shrink-0 ml-3'>
                     <Avatar>
@@ -175,13 +218,13 @@ export function Navbar({ userType }: NavbarProps) {
                         alt='User'
                       />
                       <AvatarFallback className='bg-purple-100 text-purple-800'>
-                        <User className='h-5 w-5' />
+                        <UserLogo className='h-5 w-5' />
                       </AvatarFallback>
                     </Avatar>
                   </div>
                   <div>
-                    <p className='text-sm font-medium'>ישראל ישראלי</p>
-                    <p className='text-xs text-gray-500'>israel@example.com</p>
+                    <p className='text-sm font-medium'>{user?.fullName}</p>
+                    <p className='text-xs text-gray-500'>{user?.email}</p>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
@@ -200,7 +243,7 @@ export function Navbar({ userType }: NavbarProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className='flex items-center text-red-600'>
                   <LogOut className='ml-2 h-4 w-4' />
-                  <Link href='/' className='w-full'>
+                  <Link href='/' className='w-full' onClick={logOut}>
                     התנתק
                   </Link>
                 </DropdownMenuItem>
@@ -259,7 +302,10 @@ export function Navbar({ userType }: NavbarProps) {
               <Link
                 href='/'
                 className='block py-2 px-4 rounded-md text-red-600 hover:bg-gray-100'
-                onClick={() => setIsMenuOpen(false)}>
+                onClick={() => {
+                  setIsMenuOpen(false)
+                  logOut()
+                }}>
                 התנתק
               </Link>
             </div>

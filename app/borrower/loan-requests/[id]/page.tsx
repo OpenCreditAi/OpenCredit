@@ -3,13 +3,13 @@
 import type React from 'react'
 
 import { getLoan } from '@/app/api/loans/getLoan'
-import { Loan } from '@/app/api/loans/types'
 import { DocumentItem } from '@/components/document-item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Loan } from '@/types/Loan'
 import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { use, useEffect, useRef, useState } from 'react'
@@ -130,7 +130,7 @@ export default function LoanRequestDetails({
     if (loanRequest) {
       const updatedDocuments = documents.map((doc) => ({
         ...doc,
-        status: loanRequest.file_names.includes(doc.englishName)
+        status: loanRequest.fileNames.includes(doc.englishName)
           ? 'uploaded'
           : 'missing',
       }))
@@ -185,7 +185,10 @@ export default function LoanRequestDetails({
           name: offer_data.organization_name,
           status: mapStatus(offer_data.status), // Assuming mapStatus is a function based on the interest_rate
           intrestRate: offer_data.interest_rate,
-          percentage: ((offer_data.offer_amount / loanRequest?.amount!) * 100).toFixed(2),
+          percentage: (
+            (offer_data.offer_amount / loanRequest?.amount!) *
+            100
+          ).toFixed(2),
           repaymentPeriod: offer_data.repayment_period,
           amount: offer_data.offer_amount,
           id: offer_data.id,
@@ -291,13 +294,14 @@ export default function LoanRequestDetails({
 
   const handleAddDocument = (docName: string) => {
     console.log(`Document added: ${docName}`)
-    
+
     try {
       fetchLoan() // Refresh loan data after replacement
       console.log('Loan data refreshed after document addition')
     } catch (error) {
       console.error('Failed to refresh loan data:', error)
-    }  }
+    }
+  }
 
   if (!loanRequest) {
     return 'Loading...'
@@ -407,7 +411,7 @@ export default function LoanRequestDetails({
                       <h3 className='font-semibold text-gray-700 mb-1'>
                         {financier.name}
                       </h3>
-                      <p className='text-gray-700 mb-1'  dir="rtl">
+                      <p className='text-gray-700 mb-1' dir='rtl'>
                         <strong>סטטוס:</strong>
                         <span
                           className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 ${

@@ -1,10 +1,10 @@
 'use client'
 
 import { getLoans } from '@/app/api/loans/getLoans'
-import { Loan } from '@/app/api/loans/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Loan } from '@/types/Loan'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -65,7 +65,10 @@ export default function FinancierDashboard() {
                 סכום הלוואה כולל
               </div>
               <div className='text-2xl font-bold text-gray-800'>
-                {loans.reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}₪{' '}
+                {loans
+                  .reduce((sum, loan) => sum + loan.amount, 0)
+                  .toLocaleString()}
+                ₪{' '}
               </div>
             </div>
             <div className='text-center'>
@@ -159,8 +162,7 @@ export default function FinancierDashboard() {
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        <Link
-                          href={`/financier/offer-details/${loan.id}`}>
+                        <Link href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -207,7 +209,8 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
+                      <strong>סכום הלוואה:</strong>{' '}
+                      {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
@@ -290,8 +293,7 @@ export default function FinancierDashboard() {
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        <Link
-                          href={`/financier/offer-details/${loan.id}`}>
+                        <Link href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -338,7 +340,8 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
+                      <strong>סכום הלוואה:</strong>{' '}
+                      {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>
@@ -421,8 +424,7 @@ export default function FinancierDashboard() {
                         ימים {loan.daysPassed}
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
-                        <Link
-                          href={`/financier/offer-details/${loan.id}`}>
+                        <Link href={`/financier/offer-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -469,7 +471,8 @@ export default function FinancierDashboard() {
                       <strong>מיקום:</strong> {loan.location}
                     </p>
                     <p className='mb-2'>
-                      <strong>סכום הלוואה:</strong> {loan.amount.toLocaleString()}₪{' '}
+                      <strong>סכום הלוואה:</strong>{' '}
+                      {loan.amount.toLocaleString()}₪{' '}
                     </p>
                     <p className='mb-4'>
                       <strong>זמן שעבר: </strong>

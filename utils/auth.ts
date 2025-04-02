@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const decodeToken = (token) => {
+export const decodeToken = (token: string) => {
   if (!token) return null;
   
   try {

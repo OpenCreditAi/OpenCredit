@@ -3,7 +3,6 @@
 import type React from 'react'
 
 import { getMarketplaceLoans } from '@/app/api/loans/getMarketplaceLoans'
-import { Loan } from '@/app/api/loans/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
+import { Loan } from '@/types/Loan'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
