@@ -1,6 +1,7 @@
 'use client'
 
 import type React from 'react'
+import { Suspense } from 'react'
 
 import { getUserDetails } from '@/app/api/user/getUserDetails'
 import { useConvertUser } from '@/app/api/user/useConvertUser'
@@ -31,7 +32,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function SignUp() {
+function SignUpContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get('role') || ''
@@ -415,5 +416,13 @@ export default function SignUp() {
         </CardFooter>
       </Card>
     </div>
+  )
+}
+
+export default function SignUp() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignUpContent />
+    </Suspense>
   )
 }
