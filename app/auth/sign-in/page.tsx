@@ -20,12 +20,11 @@ export default function SignIn() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const API_BASE_URL = "http://127.0.0.1:5000" // Change if needed
-
+  const { API_BASE_URL } = require("../../../config") // Change if needed
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("") // Clear previous errors
-    setIsLoading(true)
+    setIsLoading(true)  
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/signin`, {
