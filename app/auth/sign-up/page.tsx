@@ -35,7 +35,7 @@ export default function SignUp() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get('role') || ''
-  const API_BASE_URL = 'http://127.0.0.1:5000'
+  const { API_BASE_URL } = require("../../../config")
   const { setUser } = useUserStore()
 
   const fetchUserDetails = async () => {
