@@ -31,7 +31,7 @@ export default function ApplicationDetails({
   const [offerTerms, setOfferTerms] = useState<string>('')
   const [repaymentPeriod, setRepaymentPeriod] = useState<number | ''>('')
   const [error, setError] = useState<string | null>(null)
-  const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
+  const { API_BASE_URL } = require("../../../../config") // Change if needed
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
