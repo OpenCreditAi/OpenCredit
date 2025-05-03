@@ -3,13 +3,14 @@
 import type React from 'react'
 
 import { getLoan } from '@/app/api/loans/getLoan'
-import { Loan } from '@/app/api/loans/types'
 import { DocumentItem } from '@/components/document-item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Loan } from '@/types/Loan'
+import { getDocumentCategories } from '@/utils/getDocumentCategories'
 import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { use, useEffect, useRef, useState } from 'react'
@@ -66,59 +67,15 @@ export default function LoanRequestDetails({
   }, [messages])
 
   const [loanRequest, setLoanRequest] = useState<Loan>()
-  const [documents, setDocuments] = useState([
-    {
-      englishName: 'tabo_document',
-      name: 'נסח טאבו עדכני',
-      status: 'missing',
-    },
-    {
-      englishName: 'united_home_document',
-      name: 'תקנון הבית המשותף',
-      status: 'missing',
-    },
-    {
-      englishName: 'original_tama_document',
-      name: 'הסכם התמ"א המקורי',
-      status: 'missing',
-    },
-    {
-      englishName: 'project_list_document',
-      name: 'רשימת הפרויקטים של היזם',
-      status: 'missing',
-    },
-    {
-      englishName: 'company_crt_document',
-      name: 'תעודת התאגדות של החברה היזמית',
-      status: 'missing',
-    },
-    {
-      englishName: 'tama_addons_document',
-      name: 'תוספות להסכם התמ"א',
-      status: 'missing',
-    },
-    {
-      englishName: 'reject_status_document',
-      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
-      status: 'missing',
-    },
-    {
-      englishName: 'building_permit',
-      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
-      status: 'missing',
-    },
-    {
-      englishName: 'objection_status',
-      name: 'סטטוס התנגדויות',
-      status: 'missing',
-    },
-    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {
-      englishName: 'bank_account_confirm_document',
-      name: 'אישור ניהול חשבון',
-      status: 'missing',
-    },
-  ])
+  const [documents, setDocuments] = useState(
+    getDocumentCategories().map((documentCategory) => {
+      return {
+        englishName: documentCategory.id,
+        name: documentCategory.description,
+        status: 'missing',
+      }
+    })
+  )
 
   const fetchLoan = async () => setLoanRequest(await getLoan(id))
 
@@ -130,7 +87,7 @@ export default function LoanRequestDetails({
     if (loanRequest) {
       const updatedDocuments = documents.map((doc) => ({
         ...doc,
-        status: loanRequest.file_names.includes(doc.englishName)
+        status: loanRequest.fileNames.includes(doc.englishName)
           ? 'uploaded'
           : 'missing',
       }))
@@ -185,7 +142,10 @@ export default function LoanRequestDetails({
           name: offer_data.organization_name,
           status: mapStatus(offer_data.status), // Assuming mapStatus is a function based on the interest_rate
           intrestRate: offer_data.interest_rate,
-          percentage: ((offer_data.offer_amount / loanRequest?.amount!) * 100).toFixed(2),
+          percentage: (
+            (offer_data.offer_amount / loanRequest?.amount!) *
+            100
+          ).toFixed(2),
           repaymentPeriod: offer_data.repayment_period,
           amount: offer_data.offer_amount,
           id: offer_data.id,
@@ -291,13 +251,14 @@ export default function LoanRequestDetails({
 
   const handleAddDocument = (docName: string) => {
     console.log(`Document added: ${docName}`)
-    
+
     try {
       fetchLoan() // Refresh loan data after replacement
       console.log('Loan data refreshed after document addition')
     } catch (error) {
       console.error('Failed to refresh loan data:', error)
-    }  }
+    }
+  }
 
   if (!loanRequest) {
     return 'Loading...'
@@ -407,7 +368,7 @@ export default function LoanRequestDetails({
                       <h3 className='font-semibold text-gray-700 mb-1'>
                         {financier.name}
                       </h3>
-                      <p className='text-gray-700 mb-1'  dir="rtl">
+                      <p className='text-gray-700 mb-1' dir='rtl'>
                         <strong>סטטוס:</strong>
                         <span
                           className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 ${

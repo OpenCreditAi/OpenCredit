@@ -3,7 +3,6 @@
 import type React from 'react'
 
 import { getLoan } from '@/app/api/loans/getLoan'
-import { Loan } from '@/app/api/loans/types'
 import { ChatWidget } from '@/components/chat-widget'
 import { DocumentItem } from '@/components/document-item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -12,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { Loan } from '@/types/Loan'
 import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -84,18 +84,58 @@ export default function ApplicationDetails({
     fetchLoan()
   }, [])
 
-    const documents = [
-    { englishName: 'tabo_document', name: 'נסח טאבו עדכני', status: 'uploaded' },
-    {  englishName: 'united_home_document', name: 'תקנון הבית המשותף', status: 'uploaded' },
-    {  englishName: 'original_tama_document', name: 'הסכם התמ"א המקורי', status: 'uploaded' },
-    {  englishName: 'project_list_document', name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
-    {  englishName: 'company_crt_document', name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
-    {  englishName: 'tama_addons_document', name: 'תוספות להסכם התמ"א', status: 'uploaded' },
-    {  englishName: 'reject_status_document', name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',      status: 'uploaded',},
-    {  englishName: 'building_permit', name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו', status: 'uploaded', },
-    {  englishName: 'objection_status', name: 'סטטוס התנגדויות', status: 'missing' },
-    {  englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {  englishName: 'bank_account_confirm_document', name: 'אישור ניהול חשבון', status: 'missing' },
+  const documents = [
+    {
+      englishName: 'tabo_document',
+      name: 'נסח טאבו עדכני',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'united_home_document',
+      name: 'תקנון הבית המשותף',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'original_tama_document',
+      name: 'הסכם התמ"א המקורי',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'project_list_document',
+      name: 'רשימת הפרויקטים של היזם',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'company_crt_document',
+      name: 'תעודת התאגדות של החברה היזמית',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'tama_addons_document',
+      name: 'תוספות להסכם התמ"א',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'reject_status_document',
+      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'building_permit',
+      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
+      status: 'uploaded',
+    },
+    {
+      englishName: 'objection_status',
+      name: 'סטטוס התנגדויות',
+      status: 'missing',
+    },
+    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
+    {
+      englishName: 'bank_account_confirm_document',
+      name: 'אישור ניהול חשבון',
+      status: 'missing',
+    },
   ]
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -312,7 +352,8 @@ export default function ApplicationDetails({
                     <strong>סוג פרויקט:</strong> {loanRequest.projectType}
                   </p>
                   <p className='text-gray-700'>
-                    <strong>סכום הלוואה:</strong> {loanRequest.amount.toLocaleString()}₪{' '}
+                    <strong>סכום הלוואה:</strong>{' '}
+                    {loanRequest.amount.toLocaleString()}₪{' '}
                   </p>
                   <p className='text-gray-700'>
                     <strong>מיקום:</strong> {loanRequest.location}
@@ -344,7 +385,7 @@ export default function ApplicationDetails({
               <CardContent>
                 <div className='space-y-2'>
                   <p className='text-gray-700'>
-                    <strong>שם:</strong> {loanRequest.borrower?.name}
+                    <strong>שם:</strong> {loanRequest.borrower?.fullName}
                   </p>
                   <p className='text-gray-700'>
                     <strong>תפקיד:</strong> מנכ"ל
@@ -401,15 +442,15 @@ export default function ApplicationDetails({
                   }}>
                   <AvatarImage
                     src='/borrower.png'
-                    alt={loanRequest.borrower?.name}
+                    alt={loanRequest.borrower?.fullName}
                   />
                   <AvatarFallback className='bg-purple-100 text-purple-800'>
-                    {loanRequest.borrower?.name.substring(0, 2)}
+                    {loanRequest.borrower?.fullName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <CardTitle className='text-xl text-gray-800'>
-                    {loanRequest.borrower?.name}
+                    {loanRequest.borrower?.fullName}
                   </CardTitle>
                   <p className='text-sm text-gray-500'>
                     {loanRequest.companyName}
@@ -582,7 +623,7 @@ export default function ApplicationDetails({
 
       {/* Chat Widget (floating) */}
       <ChatWidget
-        borrowerName={loanRequest.borrower?.name!}
+        borrowerName={loanRequest.borrower?.fullName!}
         borrowerId={loanRequest.borrower?.id!}
         initialMessages={initialMessages}
       />

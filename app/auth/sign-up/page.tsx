@@ -2,6 +2,8 @@
 
 import type React from 'react'
 
+import { getUserDetails } from '@/app/api/user/getUserDetails'
+import { useConvertUser } from '@/app/api/user/useConvertUser'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useUserStore } from '@/stores/userStore'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
@@ -32,7 +35,21 @@ export default function SignUp() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get('role') || ''
-  const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
+  const API_BASE_URL = 'http://127.0.0.1:5000'
+  const { setUser } = useUserStore()
+
+  const fetchUserDetails = async () => {
+    const newUser = await getUserDetails()
+
+    if (newUser) {
+      setUser(newUser)
+      router.push(`/${newUser.role}/dashboard`)
+    }
+  }
+
+  useEffect(() => {
+    fetchUserDetails()
+  }, [])
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -41,7 +58,6 @@ export default function SignUp() {
     phoneNumber: '',
     address: '',
     role: defaultRole,
-    idPhoto: null,
     password: '',
     confirmPassword: '',
     organizationName: '',
@@ -132,12 +148,14 @@ export default function SignUp() {
 
     setIsSubmitting(true)
 
+    const role = formData.role === 'lawyer-notary' ? 'borrower' : formData.role
+
     try {
       // Prepare the data for the API request
       const signupData = {
         email: formData.email,
         password: formData.password,
-        role: formData.role,
+        role: role,
         // You can add other fields as needed by your API
         fullName: formData.fullName,
         idNumber: formData.idNumber,
@@ -152,30 +170,23 @@ export default function SignUp() {
         signupData
       )
 
-      console.log('User signed up:', response.data)
-
       // Store the access token in localStorage
       if (response.data.access_token) {
         localStorage.setItem('access_token', response.data.access_token)
       }
 
-      // Store user role if available
-      if (response.data.user && response.data.user.role) {
-        localStorage.setItem('user_role', response.data.user.role)
-      }
+      const user = useConvertUser(response.data.user)
+      setUser(user)
 
-      // Redirect based on user role
-      const userRole = response.data.user?.role || formData.role
-
-      if (userRole === 'lawyer-notary' || userRole === 'borrower') {
+      if (user?.role === 'borrower') {
         router.push('/borrower/dashboard')
-      } else if (userRole === 'financier') {
+      } else if (user?.role === 'financier') {
         router.push('/financier/dashboard')
       } else {
         // Default fallback
         router.push('/auth/sign-in')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error)
       setApiError(
         error.response?.data?.error ||

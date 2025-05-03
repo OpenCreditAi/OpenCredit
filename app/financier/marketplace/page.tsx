@@ -3,9 +3,9 @@
 import type React from 'react'
 
 import { getMarketplaceLoans } from '@/app/api/loans/getMarketplaceLoans'
-import { Loan } from '@/app/api/loans/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -16,6 +16,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
+import { Loan } from '@/types/Loan'
+import { getDocumentCategories } from '@/utils/getDocumentCategories'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -28,6 +30,7 @@ export default function Marketplace() {
     location: '',
     status: '',
     company: '',
+    documentCompletion: false,
   })
 
   // Track filtered data
@@ -113,6 +116,16 @@ export default function Marketplace() {
         loan.companyName
           .toLowerCase()
           .includes(currentFilters.company.toLowerCase())
+      )
+    }
+
+    if (currentFilters.documentCompletion) {
+      const documentCategories = getDocumentCategories()
+
+      results = results.filter((loan) =>
+        documentCategories.every((documentCategory) =>
+          loan.fileNames.includes(documentCategory.id)
+        )
       )
     }
 
@@ -232,6 +245,24 @@ export default function Marketplace() {
                     className='mt-1'
                   />
                 </div>
+
+                <div className='flex flex-row items-center'>
+                  <Label className='pl-1 text' htmlFor='documentCompletion'>
+                    רק בקשות עם כל המסמכים:
+                  </Label>
+                  <Checkbox
+                    id='documentCompletion'
+                    checked={filters.documentCompletion}
+                    onCheckedChange={() => {
+                      const newFilters = {
+                        ...filters,
+                        documentCompletion: !filters.documentCompletion,
+                      }
+                      setFilters(newFilters)
+                      applyFilters(newFilters)
+                    }}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -254,13 +285,13 @@ export default function Marketplace() {
               <Button
                 variant='outline'
                 onClick={() => {
-                  const resetFilters = {
+                  setFilters({
                     projectType: '',
                     location: '',
                     status: '',
                     company: '',
-                  }
-                  setFilters(resetFilters)
+                    documentCompletion: false,
+                  })
                   setMaxAmount(10000000)
                   setFilteredLoans(loans)
                 }}
