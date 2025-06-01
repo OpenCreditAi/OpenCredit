@@ -25,7 +25,11 @@ export default function BorrowerDashboard() {
   const getFilteredLoans = (tab: string) => {
     switch (tab) {
       case 'processing':
-        return loans.filter((loan) => loan.status === 'בטיפול')
+        return loans.filter((loan) => loan.status in [ 'מעבד מסמכים',
+          'חסרים מסמכים',
+          'הצעות ממתינות',
+          'ממתין להצעות',
+         ])
       case 'active':
         return loans.filter((loan) => loan.status === 'הלוואה פעילה')
       case 'completed':

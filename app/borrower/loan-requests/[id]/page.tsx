@@ -180,17 +180,22 @@ export default function LoanRequestDetails({
       })
       if (response.status === 200) {
         const data = response.data
+        console.log("data: ",data)
 
         const selectedFinanciers = data.map((offer_data: any) => ({
           name: offer_data.organization_name,
+          statusColor: mapStatusColor(offer_data.status), // Original status from the API
           status: mapStatus(offer_data.status), // Assuming mapStatus is a function based on the interest_rate
           intrestRate: offer_data.interest_rate,
           percentage: ((offer_data.offer_amount / loanRequest?.amount!) * 100).toFixed(2),
           repaymentPeriod: offer_data.repayment_period,
           amount: offer_data.offer_amount,
-          id: offer_data.id,
+          id: offer_data.id
+          
         }))
-
+        console.log("selectedFinanciers: ", selectedFinanciers)
+        console.log("loanRequest: ", loanRequest)
+        
         setFinanciers(selectedFinanciers)
       }
     } catch (error) {
@@ -206,20 +211,37 @@ export default function LoanRequestDetails({
 
   const mapStatus = (status: string) => {
     switch (status) {
-      case 'Pending':
-        return 'בהמתנה' // Pending
-      case 'Accepted':
+      case 'PENDING_FINANCIER':
+        return 'ממתין למממן' //  Pending Financier
+      case 'PENDING_BORROWER':
+        return 'ממתין לך' // Pending Borrower
+      case 'EXPIRED':
+        return 'פג תוקף' // Expired
+      case 'ACCEPTED':
         return 'התקבל' // Accepted
-      case 'Denied':
-        return 'נדחה' // Denied
+      case 'REJECTED':
+        return 'נדחה' // Rejected
       default:
         return 'לא זמין' // Default if status is not recognized
     }
   }
 
-  useEffect(() => {
-    getOffers()
-  }, [id])
+  const mapStatusColor = (status: string) => {
+    switch (status) {
+      case 'PENDING_FINANCIER':
+        return 'yellow' //  Pending Financier
+      case 'PENDING_BORROWER':
+        return 'yellow' // Pending Borrower
+      case 'EXPIRED':
+        return 'red' // Expired
+      case 'ACCEPTED':
+        return 'green' // Accepted
+      case 'REJECTED':
+        return 'red' // Rejected
+      default:
+        return 'red' // Default if status is not recognized
+    }
+  }
 
   const approveOffer = async (id: string) => {
     try {
@@ -350,10 +372,10 @@ export default function LoanRequestDetails({
                       </p>
                       <p className='text-gray-700 mb-1 text-sm' dir='rtl'>
                         <strong>סטטוס:</strong>
-                        <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
+                        <span className={`relative inline-block px-2 py-1 font-semibold text-${loanRequest.statusColor}-900 leading-tight text-xs ml-1`}>
                           <span
                             aria-hidden
-                            className='absolute inset-0 bg-green-200 opacity-50 rounded-full'></span>
+                            className={`absolute inset-0 bg-${loanRequest.statusColor}-200 opacity-50 rounded-full`}></span>
                           <span className='relative'>{loanRequest.status}</span>
                         </span>
                       </p>
@@ -410,22 +432,11 @@ export default function LoanRequestDetails({
                       <p className='text-gray-700 mb-1'  dir="rtl">
                         <strong>סטטוס:</strong>
                         <span
-                          className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 ${
-                            financier.status === 'התקבל'
-                              ? 'text-green-900'
-                              : financier.status === 'בהמתנה'
-                              ? 'text-yellow-900'
-                              : 'text-red-900'
-                          }`}>
+                          className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ml-1 text-${
+                            financier.statusColor}-900`}>
                           <span
                             aria-hidden
-                            className={`absolute inset-0 ${
-                              financier.status === 'התקבל'
-                                ? 'bg-green-200'
-                                : financier.status === 'בהמתנה'
-                                ? 'bg-yellow-200'
-                                : 'bg-red-200'
-                            } opacity-50 rounded-full`}></span>
+                            className={`absolute inset-0 bg-${financier.statusColor}-200 opacity-50 rounded-full`}></span>
                           <span className='relative'>{financier.status}</span>
                         </span>
                       </p>
@@ -495,22 +506,14 @@ export default function LoanRequestDetails({
                         <p className='text-sm text-gray-500'>מממן מורשה</p>
                       </div>
                       <span
-                        className={`mr-auto relative inline-block px-2 py-1 font-semibold leading-tight text-xs ${
-                          financier.status === 'התקבל'
-                            ? 'text-green-900'
-                            : financier.status === 'בהמתנה'
-                            ? 'text-yellow-900'
-                            : 'text-red-900'
-                        }`}>
+                        className={`mr-auto relative inline-block px-2 py-1 font-semibold leading-tight text-xs text-${
+                          financier.statusColor
+                        }-900`}>
                         <span
                           aria-hidden
-                          className={`absolute inset-0 ${
-                            financier.status === 'התקבל'
-                              ? 'bg-green-200'
-                              : financier.status === 'בהמתנה'
-                              ? 'bg-yellow-200'
-                              : 'bg-red-200'
-                          } opacity-50 rounded-full`}></span>
+                          className={`absolute inset-0 bg-${
+                            financier.statusColor
+                          }-200 opacity-50 rounded-full`}></span>
                         <span className='relative'>{financier.status}</span>
                       </span>
                     </div>
@@ -534,7 +537,7 @@ export default function LoanRequestDetails({
                         </p>
                       </div>
                     </div>
-                    {financier.status === 'בהמתנה' && (
+                    {financier.status === 'ממתין לך' && (
                       <div className='mt-4 flex space-x-2 space-x-reverse'>
                         <Button
                           variant='default'
