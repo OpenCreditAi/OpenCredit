@@ -160,7 +160,7 @@ export default function FinancierDashboard() {
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <Link
-                          href={`/financier/offer-details/${loan.id}`}>
+                          href={`/financier/application-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -291,7 +291,7 @@ export default function FinancierDashboard() {
                       </td>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <Link
-                          href={`/financier/offer-details/${loan.id}`}>
+                          href={`/financier/application-details/${loan.id}`}>
                           <Button
                             variant='outline'
                             size='sm'
@@ -475,7 +475,7 @@ export default function FinancierDashboard() {
                       <strong>זמן שעבר: </strong>
                       {`${loan.daysPassed} ימים`}
                     </p>
-                    <Link href={`/financier/offer-details/${loan.id}`}>
+                    <Link href={`/financier/application-details/${loan.id}`}>
                       <Button className='w-full'>צפה בפרטים</Button>
                     </Link>
                   </CardContent>
