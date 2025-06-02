@@ -16,6 +16,7 @@ import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useRef, useState } from 'react'
+import { getTextDirection } from '@/utils/textDirection'
 
 export default function ApplicationDetails({
   params,
@@ -395,9 +396,18 @@ export default function ApplicationDetails({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='space-y-2'>
+                <div className='space-y-2' dir="rtl">
                   <p className='text-gray-700'>
-                    <strong>שם:</strong> {loanRequest.borrower?.name}
+                    <strong>שם: </strong>
+                    <span 
+                      className="inline-block" 
+                      style={{ 
+                        direction: getTextDirection(loanRequest.borrower?.name || ''),
+                        unicodeBidi: 'isolate'
+                      }}
+                    >
+                      {loanRequest.borrower?.name}
+                    </span>
                   </p>
                   <p className='text-gray-700'>
                     <strong>תפקיד:</strong> מנכ"ל

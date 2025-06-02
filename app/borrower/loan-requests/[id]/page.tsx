@@ -489,23 +489,9 @@ export default function LoanRequestDetails({
                 {financiers.map((financier, index) => (
                   <div key={index} className='border-b pb-4 last:border-0'>
                     <div className='flex items-center mb-2'>
-                      <Avatar className='h-10 w-10 ml-3'>
-                        <AvatarImage
-                          src='/placeholder.svg?height=40&width=40'
-                          alt={financier.name}
-                        />
-                        <AvatarFallback className='bg-purple-100 text-purple-800'>
-                          {financier.name.substring(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className='font-semibold text-gray-800'>
-                          {financier.name}
-                        </h3>
-                        <p className='text-sm text-gray-500'>מממן מורשה</p>
-                      </div>
+                      {/* Status badge - right side */}
                       <span
-                        className={`mr-auto relative inline-block px-2 py-1 font-semibold leading-tight text-xs text-${
+                        className={`ml-auto relative inline-block px-2 py-1 font-semibold leading-tight text-xs text-${
                           financier.statusColor
                         }-900`}>
                         <span
@@ -515,9 +501,30 @@ export default function LoanRequestDetails({
                           }-200 opacity-50 rounded-full`}></span>
                         <span className='relative'>{financier.status}</span>
                       </span>
+                      
+                      {/* Organization details - middle */}
+                      <div className='mx-3'>
+                        <h3 className='font-semibold text-gray-800'>
+                          {financier.name}
+                        </h3>
+                        <p className='text-sm text-gray-500'>מממן מורשה</p>
+                      </div>
+                      
+                      {/* Avatar - left side */}
+                      <Avatar className='h-10 w-10'>
+                        <AvatarImage
+                          src='/placeholder.svg?height=40&width=40'
+                          alt={financier.name}
+                        />
+                        <AvatarFallback className='bg-purple-100 text-purple-800'>
+                          {financier.name.substring(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
+                    
+                    {/* Offer details grid */}
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
-                      <div>
+                      <div className='text-right'>
                         <p className='text-sm text-gray-700'>
                           <strong>אחוז מימון:</strong> {financier.percentage}%
                         </p>
@@ -526,7 +533,7 @@ export default function LoanRequestDetails({
                           {financier.amount.toLocaleString()}₪{' '}
                         </p>
                       </div>
-                      <div>
+                      <div className='text-right'>
                         <p className='text-sm text-gray-700'>
                           <strong>ריבית מוצעת:</strong> {financier.intrestRate}%
                         </p>
@@ -536,6 +543,8 @@ export default function LoanRequestDetails({
                         </p>
                       </div>
                     </div>
+                    
+                    {/* Action buttons */}
                     {financier.status === 'ממתין לך' && (
                       <div className='mt-4 flex space-x-2 space-x-reverse'>
                         <Button
