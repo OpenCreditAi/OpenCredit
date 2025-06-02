@@ -335,7 +335,7 @@ export default function LoanRequestDetails({
         <TabsList className='mb-4'>
           <TabsTrigger value='details'>פרטי בקשה</TabsTrigger>
           <TabsTrigger value='documents'>מסמכים</TabsTrigger>
-          <TabsTrigger value='financiers'>מממנים</TabsTrigger>
+          <TabsTrigger value='financiers'>הצעות מימון</TabsTrigger>
           <TabsTrigger value='chat'>צ'אט</TabsTrigger>
         </TabsList>
 

@@ -31,7 +31,9 @@ export default function BorrowerDashboard() {
           'ממתין להצעות',
          ])
       case 'active':
-        return loans.filter((loan) => loan.status === 'הלוואה פעילה')
+        return loans.filter((loan) => 
+          !['הושלם', 'פג תוקף'].includes(loan.status)
+        )
       case 'completed':
         return loans.filter((loan) => loan.status === 'הושלם')
       default:

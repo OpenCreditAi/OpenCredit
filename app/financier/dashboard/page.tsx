@@ -24,8 +24,10 @@ export default function FinancierDashboard() {
 
   const getFilteredLoans = (tab: string) => {
     switch (tab) {
-      case 'processing':
-        return loans.filter((loan) => loan.status === 'בטיפול')
+      case 'waiting-for-offers':
+        return loans.filter((loan) => loan.status === 'ממתין להצעות')
+      case 'successful':
+        return loans.filter((loan) => ['הושלם', 'הלוואה פעילה'].includes(loan.status))
       default:
         return loans
     }
@@ -57,7 +59,7 @@ export default function FinancierDashboard() {
                 הלוואות בטיפול
               </div>
               <div className='text-2xl font-bold text-gray-800'>
-                {getFilteredLoans('processing').length}
+                {getFilteredLoans('waiting-for-offers').length}
               </div>
             </div>
             <div className='text-center'>
@@ -88,8 +90,8 @@ export default function FinancierDashboard() {
       <Tabs defaultValue='all' className='mb-6'>
         <TabsList className='mb-4'>
           <TabsTrigger value='all'>כל הבקשות</TabsTrigger>
-          <TabsTrigger value='processing'>בקשות בטיפול</TabsTrigger>
-          <TabsTrigger value='offered'>הצעות שהוגשו</TabsTrigger>
+          <TabsTrigger value='waiting-for-offers'>ממתינות להצעה</TabsTrigger>
+          <TabsTrigger value='successful'>הצעות מוצלחות</TabsTrigger>
         </TabsList>
 
         <TabsContent value='all'>
@@ -223,7 +225,7 @@ export default function FinancierDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value='processing'>
+        <TabsContent value='waiting-for-offers'>
           {viewType === 'table' ? (
             <div className='bg-white shadow-md rounded-lg overflow-x-auto'>
               <table className='min-w-full leading-normal'>
@@ -256,7 +258,7 @@ export default function FinancierDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {getFilteredLoans('processing').map((loan) => (
+                  {getFilteredLoans('waiting-for-offers').map((loan) => (
                     <tr key={loan.id}>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <span
@@ -307,7 +309,7 @@ export default function FinancierDashboard() {
             </div>
           ) : (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {getFilteredLoans('processing').map((loan) => (
+              {getFilteredLoans('waiting-for-offers').map((loan) => (
                 <Card key={loan.id}>
                   <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>
@@ -354,7 +356,7 @@ export default function FinancierDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value='offered'>
+        <TabsContent value='successful'>
           {viewType === 'table' ? (
             <div className='bg-white shadow-md rounded-lg overflow-x-auto'>
               <table className='min-w-full leading-normal'>
@@ -387,7 +389,7 @@ export default function FinancierDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {getFilteredLoans('offered').map((loan) => (
+                  {getFilteredLoans('successful').map((loan) => (
                     <tr key={loan.id}>
                       <td className='px-5 py-5 border-b border-gray-200 bg-white text-right text-sm'>
                         <span
@@ -438,7 +440,7 @@ export default function FinancierDashboard() {
             </div>
           ) : (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {getFilteredLoans('offered').map((loan) => (
+              {getFilteredLoans('successful').map((loan) => (
                 <Card key={loan.id}>
                   <CardContent className='p-6' dir='rtl'>
                     <p className='mb-2'>

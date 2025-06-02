@@ -213,10 +213,12 @@ export default function Marketplace() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='status'>בחר סטטוס</SelectItem>
-                      <SelectItem value='חדש'>חדש</SelectItem>
-                      <SelectItem value='בטיפול'>בטיפול</SelectItem>
+                      <SelectItem value='חסרים מסמכים'>חסרים מסמכים</SelectItem>
+                      <SelectItem value='מעבד מסמכים'>מעבד מסמכים</SelectItem>
+                      <SelectItem value='ממתין להצעות'>ממתין להצעות</SelectItem>
+                      <SelectItem value='הצעות ממתינות'>הצעות ממתינות</SelectItem>
+                      <SelectItem value='הלוואה פעילה'>הלוואה פעילה</SelectItem>
                       <SelectItem value='הושלם'>הושלם</SelectItem>
-                      <SelectItem value='נדחה'>נדחה</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
