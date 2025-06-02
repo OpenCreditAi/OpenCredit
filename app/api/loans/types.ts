@@ -46,7 +46,7 @@ export const getLoanStatusDetails = (
     {
       status: LoanStatus.MISSING_DOCUMENTS,
       statusColor: 'yellow',
-      progress: 15,
+      progress: 11,
     },
     {
       status: LoanStatus.PENDING_OFFERS,
@@ -61,7 +61,7 @@ export const getLoanStatusDetails = (
     {
       status: LoanStatus.ACTTVE_LOAN,
       statusColor: 'green',
-      progress: 85,
+      progress: 90,
     },
     {
       status: LoanStatus.PAID,

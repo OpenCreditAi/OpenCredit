@@ -376,10 +376,10 @@ export default function ApplicationDetails({
                   </p>
                   <p className='text-gray-700' dir='rtl'>
                     <strong>סטטוס: </strong>
-                    <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
+                    <span className={`relative inline-block px-2 py-1 font-semibold text-${loanRequest.statusColor}-900 leading-tight text-xs ml-1`}>
                       <span
                         aria-hidden
-                        className='absolute inset-0 bg-green-200 opacity-50 rounded-full'></span>
+                        className={`absolute inset-0 bg-${loanRequest.statusColor}-200 opacity-50 rounded-full`}></span>
                       <span className='relative'>{loanRequest.status}</span>
                     </span>
                   </p>

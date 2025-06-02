@@ -395,12 +395,11 @@ export default function LoanRequestDetails({
                   <div className='relative pt-1'>
                     {/* Progress Bar with Labels */}
                     <div className='flex mb-4'>
-                      <div className='w-1/6 text-center'>מעבדים את המסמכים</div>
-                      <div className='w-1/6 text-center'>אוספים לך הצעות</div>
-                      <div className='w-1/6 text-center'>בחירת הלוואה</div>
-                      <div className='w-1/6 text-center'>מחכים לחתימות</div>
-                      <div className='w-1/6 text-center'>הכסף בדרך אצלך</div>
-                      <div className='w-1/6 text-center'>הכסף אצלך</div>
+                      <div className='w-1/5 text-center'>חסרים מסמכים</div>
+                      <div className='w-1/5 text-center'>מעבדים את המסמכים</div>
+                      <div className='w-1/5 text-center'>אוספים לך הצעות</div>
+                      <div className='w-1/5 text-center'>בחירת הלוואה</div>
+                      <div className='w-1/5 text-center'>הכסף אצלך</div>
                     </div>
 
                     {/* Progress bar */}
