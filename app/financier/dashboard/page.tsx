@@ -28,6 +28,8 @@ export default function FinancierDashboard() {
         return loans.filter((loan) => loan.status === 'ממתין להצעות')
       case 'successful':
         return loans.filter((loan) => ['הושלם', 'הלוואה פעילה'].includes(loan.status))
+      case 'processing':
+        return loans.filter((loan) => !['הושלם', 'הלוואה פעילה', 'פג תוקף'].includes(loan.status))
       default:
         return loans
     }
@@ -59,7 +61,7 @@ export default function FinancierDashboard() {
                 הלוואות בטיפול
               </div>
               <div className='text-2xl font-bold text-gray-800'>
-                {getFilteredLoans('waiting-for-offers').length}
+                {getFilteredLoans('processing').length}
               </div>
             </div>
             <div className='text-center'>
@@ -74,7 +76,20 @@ export default function FinancierDashboard() {
               <div className='text-xl font-semibold text-purple-700'>
                 אחוז אישור ממוצע
               </div>
-              <div className='text-2xl font-bold text-gray-800'>85%</div>
+              <div className='text-2xl font-bold text-gray-800'>
+                {(() => {
+                  const completedLoans = loans.filter(loan => 
+                    ['הושלם', 'הלוואה פעילה'].includes(loan.status)
+                  ).length;
+                  const totalDecidedLoans = loans.filter(loan => 
+                    ['הושלם', 'פג תוקף', 'הלוואה פעילה'].includes(loan.status)
+                  ).length;
+
+                  return totalDecidedLoans > 0 
+                    ? Math.round((completedLoans / totalDecidedLoans) * 100) + '%'
+                    : '0%';
+                })()}
+              </div>
             </div>
           </div>
         </CardContent>
