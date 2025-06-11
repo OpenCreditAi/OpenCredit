@@ -16,6 +16,7 @@ import axios from 'axios'
 import { Paperclip, Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useRef, useState } from 'react'
+import { getTextDirection } from '@/utils/textDirection'
 
 export default function ApplicationDetails({
   params,
@@ -78,25 +79,78 @@ export default function ApplicationDetails({
 
   const [loanRequest, setLoanRequest] = useState<Loan>()
 
+
+  const [documents, setDocuments] = useState([
+    {
+      englishName: 'tabo_document',
+      name: 'נסח טאבו עדכני',
+      status: 'missing',
+    },
+    {
+      englishName: 'united_home_document',
+      name: 'תקנון הבית המשותף',
+      status: 'missing',
+    },
+    {
+      englishName: 'original_tama_document',
+      name: 'הסכם התמ"א המקורי',
+      status: 'missing',
+    },
+    {
+      englishName: 'project_list_document',
+      name: 'רשימת הפרויקטים של היזם',
+      status: 'missing',
+    },
+    {
+      englishName: 'company_crt_document',
+      name: 'תעודת התאגדות של החברה היזמית',
+      status: 'missing',
+    },
+    {
+      englishName: 'tama_addons_document',
+      name: 'תוספות להסכם התמ"א',
+      status: 'missing',
+    },
+    {
+      englishName: 'reject_status_document',
+      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
+      status: 'missing',
+    },
+    {
+      englishName: 'building_permit',
+      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
+      status: 'missing',
+    },
+    {
+      englishName: 'objection_status',
+      name: 'סטטוס התנגדויות',
+      status: 'missing',
+    },
+    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
+    {
+      englishName: 'bank_account_confirm_document',
+      name: 'אישור ניהול חשבון',
+      status: 'missing',
+    },
+  ])
+
   const fetchLoan = async () => setLoanRequest(await getLoan(id))
 
   useEffect(() => {
     fetchLoan()
   }, [])
 
-    const documents = [
-    { englishName: 'tabo_document', name: 'נסח טאבו עדכני', status: 'uploaded' },
-    {  englishName: 'united_home_document', name: 'תקנון הבית המשותף', status: 'uploaded' },
-    {  englishName: 'original_tama_document', name: 'הסכם התמ"א המקורי', status: 'uploaded' },
-    {  englishName: 'project_list_document', name: 'רשימת הפרויקטים של היזם', status: 'uploaded' },
-    {  englishName: 'company_crt_document', name: 'תעודת התאגדות של החברה היזמית', status: 'uploaded' },
-    {  englishName: 'tama_addons_document', name: 'תוספות להסכם התמ"א', status: 'uploaded' },
-    {  englishName: 'reject_status_document', name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',      status: 'uploaded',},
-    {  englishName: 'building_permit', name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו', status: 'uploaded', },
-    {  englishName: 'objection_status', name: 'סטטוס התנגדויות', status: 'missing' },
-    {  englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {  englishName: 'bank_account_confirm_document', name: 'אישור ניהול חשבון', status: 'missing' },
-  ]
+  useEffect(() => {
+    if (loanRequest) {
+      const updatedDocuments = documents.map((doc) => ({
+        ...doc,
+        status: loanRequest.file_names.includes(doc.englishName)
+          ? 'uploaded'
+          : 'missing',
+      }))
+      setDocuments(updatedDocuments)
+    }
+  }, [loanRequest])
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
@@ -323,10 +377,10 @@ export default function ApplicationDetails({
                   </p>
                   <p className='text-gray-700' dir='rtl'>
                     <strong>סטטוס: </strong>
-                    <span className='relative inline-block px-2 py-1 font-semibold text-green-900 leading-tight text-xs ml-1'>
+                    <span className={`relative inline-block px-2 py-1 font-semibold text-${loanRequest.statusColor}-900 leading-tight text-xs ml-1`}>
                       <span
                         aria-hidden
-                        className='absolute inset-0 bg-green-200 opacity-50 rounded-full'></span>
+                        className={`absolute inset-0 bg-${loanRequest.statusColor}-200 opacity-50 rounded-full`}></span>
                       <span className='relative'>{loanRequest.status}</span>
                     </span>
                   </p>
@@ -342,9 +396,18 @@ export default function ApplicationDetails({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='space-y-2'>
+                <div className='space-y-2' dir="rtl">
                   <p className='text-gray-700'>
-                    <strong>שם:</strong> {loanRequest.borrower?.name}
+                    <strong>שם: </strong>
+                    <span 
+                      className="inline-block" 
+                      style={{ 
+                        direction: getTextDirection(loanRequest.borrower?.name || ''),
+                        unicodeBidi: 'isolate'
+                      }}
+                    >
+                      {loanRequest.borrower?.name}
+                    </span>
                   </p>
                   <p className='text-gray-700'>
                     <strong>תפקיד:</strong> מנכ"ל
@@ -536,7 +599,7 @@ export default function ApplicationDetails({
                 type='number'
                 value={repaymentPeriod}
                 onChange={handleRepaymentPeriodChange}
-                placeholder='הכנס תקופה (בחדשים)'
+                placeholder='הכנס תקופה (בחודשים)'
                 className='mb-4'
               />
             </div>

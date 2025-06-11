@@ -1,9 +1,11 @@
 export enum LoanStatus {
-  New = 'חדש',
-  GotOffers = 'בטיפול',
-  Active = 'הלוואה פעילה',
-  Complete = 'הושלם',
-  Rejected = 'נדחה',
+  PROCESSING_DOCUMENTS = 'מעבד מסמכים',
+  MISSING_DOCUMENTS = 'חסרים מסמכים',
+  PENDING_OFFERS = 'הצעות ממתינות',
+  WAITING_FOR_OFFERS = 'ממתין להצעות',
+  ACTTVE_LOAN = 'הלוואה פעילה',
+  PAID = 'הושלם',
+  EXPIRED = 'פג תוקף',
 }
 
 export type LoanStatusDetails = {
@@ -32,37 +34,46 @@ export type Borrower = {
 }
 
 export const getLoanStatusDetails = (
-  loanStatus: LoanStatus
+  loanStatus: Number | string
 ): LoanStatusDetails => {
+
   const LoanStatuses: LoanStatusDetails[] = [
     {
-      status: LoanStatus.New,
-      statusColor: 'green',
-      progress: 25,
+      status: LoanStatus.PROCESSING_DOCUMENTS,
+      statusColor: 'gray',
+      progress: 30,
     },
     {
-      status: LoanStatus.GotOffers,
+      status: LoanStatus.MISSING_DOCUMENTS,
       statusColor: 'yellow',
-      progress: 60,
+      progress: 11,
     },
     {
-      status: LoanStatus.Active,
+      status: LoanStatus.PENDING_OFFERS,
+      statusColor: 'yellow',
+      progress: 70,
+    },
+    {
+      status: LoanStatus.WAITING_FOR_OFFERS,
+      statusColor: 'gray',
+      progress: 50,
+    },
+    {
+      status: LoanStatus.ACTTVE_LOAN,
       statusColor: 'green',
-      progress: 85,
+      progress: 90,
     },
     {
-      status: LoanStatus.Complete,
+      status: LoanStatus.PAID,
       statusColor: 'gray',
       progress: 100,
     },
     {
-      status: LoanStatus.Rejected,
+      status: LoanStatus.EXPIRED,
       statusColor: 'red',
       progress: 0,
     },
   ]
 
-  return LoanStatuses.find(
-    (loanStatusDetails) => loanStatusDetails.status === loanStatus
-  )!
+  return LoanStatuses[loanStatus as number]
 }
