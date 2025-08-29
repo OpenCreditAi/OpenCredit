@@ -105,7 +105,7 @@ export default function Marketplace() {
 
     if (showRecommendedOnly) {
       return results
-        .filter((loan) => loan.recommendationOrder !== undefined)
+        .filter((loan) => loan.recommendationOrder !== null)
         .sort((a, b) => a.recommendationOrder! - b.recommendationOrder!)
     } else {
       return results

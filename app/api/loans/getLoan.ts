@@ -31,7 +31,7 @@ export const convertLoan = (loan: any): Loan => {
     location: loan.address,
     amount: loan.amount,
     borrower,
-    recommendationOrder: loan.recommendation_order,
+    recommendationOrder: loan.recommendation_order ?? null,
     daysPassed: calculateDaysPassed(loan.created_at),
     file_names: loan.file_names,
     ...getLoanStatusDetails(loan.status),

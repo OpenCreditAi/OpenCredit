@@ -23,7 +23,7 @@ export type Loan = {
   amount: number
   daysPassed: number
   borrower?: Borrower
-  recommendationOrder?: number
+  recommendationOrder: number
   file_names: string[]
 } & LoanStatusDetails
 
@@ -37,7 +37,6 @@ export type Borrower = {
 export const getLoanStatusDetails = (
   loanStatus: Number | string
 ): LoanStatusDetails => {
-
   const LoanStatuses: LoanStatusDetails[] = [
     {
       status: LoanStatus.PROCESSING_DOCUMENTS,
