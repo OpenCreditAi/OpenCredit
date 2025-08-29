@@ -17,11 +17,12 @@ import {
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function Marketplace() {
   const router = useRouter()
   const [viewType, setViewType] = useState<'table' | 'cards'>('table')
+  const [showRecommendedOnly, setShowRecommendedOnly] = useState(false)
   const [maxAmount, setMaxAmount] = useState<number>(200000000)
   const [filters, setFilters] = useState({
     projectType: '',
@@ -30,14 +31,11 @@ export default function Marketplace() {
     company: '',
   })
 
-  // Track filtered data
-  const [filteredLoans, setFilteredLoans] = useState<Loan[]>([])
   const [loans, setLoans] = useState<Loan[]>([])
 
   const fetchLoans = async () => {
     const newLoans = await getMarketplaceLoans()
     setLoans(newLoans)
-    setFilteredLoans(newLoans)
   }
 
   useEffect(() => {
@@ -55,7 +53,6 @@ export default function Marketplace() {
       [name]: value,
     }
     setFilters(newFilters)
-    applyFilters(newFilters)
   }
 
   const handleSelectChange = (name: string, value: string) => {
@@ -64,60 +61,56 @@ export default function Marketplace() {
       [name]: value,
     }
     setFilters(newFilters)
-    applyFilters(newFilters)
   }
 
   const handleSliderChange = (value: number[]) => {
     setMaxAmount(value[0])
-    applyFilters({ ...filters, maxAmount: value[0] })
   }
 
-  const applyFilters = (currentFilters: any) => {
+  const filteredLoans = useMemo(() => {
     let results = [...loans]
 
     // Filter by project type
-    if (
-      currentFilters.projectType &&
-      currentFilters.projectType !== 'projectType'
-    ) {
+    if (filters.projectType && filters.projectType !== 'projectType') {
       results = results.filter(
-        (loan) => loan.projectType === currentFilters.projectType
+        (loan) => loan.projectType === filters.projectType
       )
     }
 
     // Filter by location (case insensitive partial match)
-    if (currentFilters.location) {
+    if (filters.location) {
       results = results.filter((loan) =>
-        loan.location
-          .toLowerCase()
-          .includes(currentFilters.location.toLowerCase())
+        loan.location.toLowerCase().includes(filters.location.toLowerCase())
       )
     }
 
     // Filter by max amount
-    const maxAmountValue = currentFilters.maxAmount || maxAmount
     results = results.filter((loan) => {
       // Extract numeric value from amount string (e.g., "5,000,000 ₪" -> 5000000)
       const numericAmount = Number(loan.amount)
-      return numericAmount <= maxAmountValue
+      return numericAmount <= maxAmount
     })
 
     // Filter by status
-    if (currentFilters.status && currentFilters.status !== 'status') {
-      results = results.filter((loan) => loan.status === currentFilters.status)
+    if (filters.status && filters.status !== 'status') {
+      results = results.filter((loan) => loan.status === filters.status)
     }
 
     // Filter by company name
-    if (currentFilters.company) {
+    if (filters.company) {
       results = results.filter((loan) =>
-        loan.companyName
-          .toLowerCase()
-          .includes(currentFilters.company.toLowerCase())
+        loan.companyName.toLowerCase().includes(filters.company.toLowerCase())
       )
     }
 
-    setFilteredLoans(results)
-  }
+    if (showRecommendedOnly) {
+      return results
+        .filter((loan) => loan.recommendationOrder !== undefined)
+        .sort((a, b) => a.recommendationOrder! - b.recommendationOrder!)
+    } else {
+      return results
+    }
+  }, [filters, loans, maxAmount, showRecommendedOnly])
 
   const openApplicationDetails = (id: string) => {
     router.push(`/financier/application-details/${id}`)
@@ -132,8 +125,19 @@ export default function Marketplace() {
           </h1>
           <div className='space-x-4 space-x-reverse'>
             <Button
+              onClick={() => setShowRecommendedOnly(true)}
               variant='default'
-              className='bg-purple-700 hover:bg-purple-900 text-yellow-200'>
+              className={`bg-purple-700 hover:bg-purple-900${
+                showRecommendedOnly ? ' text-yellow-300' : ''
+              }`}>
+              בקשות מומלצות ✨
+            </Button>
+            <Button
+              onClick={() => setShowRecommendedOnly(false)}
+              variant='default'
+              className={`bg-purple-700 hover:bg-purple-900${
+                !showRecommendedOnly ? ' text-yellow-300' : ''
+              }`}>
               כל הבקשות
             </Button>
           </div>
@@ -216,7 +220,9 @@ export default function Marketplace() {
                       <SelectItem value='חסרים מסמכים'>חסרים מסמכים</SelectItem>
                       <SelectItem value='מעבד מסמכים'>מעבד מסמכים</SelectItem>
                       <SelectItem value='ממתין להצעות'>ממתין להצעות</SelectItem>
-                      <SelectItem value='הצעות ממתינות'>הצעות ממתינות</SelectItem>
+                      <SelectItem value='הצעות ממתינות'>
+                        הצעות ממתינות
+                      </SelectItem>
                       <SelectItem value='הלוואה פעילה'>הלוואה פעילה</SelectItem>
                       <SelectItem value='הושלם'>הושלם</SelectItem>
                     </SelectContent>
@@ -264,7 +270,7 @@ export default function Marketplace() {
                   }
                   setFilters(resetFilters)
                   setMaxAmount(10000000)
-                  setFilteredLoans(loans)
+                  setShowRecommendedOnly(false)
                 }}
                 className='mt-2'>
                 נקה סינון

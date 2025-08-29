@@ -13,7 +13,7 @@ const getRandomLoanStatus = (): LoanStatus =>
 
 export const convertLoan = (loan: any): Loan => {
   let borrower: Borrower | undefined = undefined
-  
+
   if (loan.borrower) {
     borrower = {
       id: loan.borrower.id,
@@ -31,6 +31,7 @@ export const convertLoan = (loan: any): Loan => {
     location: loan.address,
     amount: loan.amount,
     borrower,
+    recommendationOrder: loan.recommendation_order,
     daysPassed: calculateDaysPassed(loan.created_at),
     file_names: loan.file_names,
     ...getLoanStatusDetails(loan.status),

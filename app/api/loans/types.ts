@@ -23,6 +23,7 @@ export type Loan = {
   amount: number
   daysPassed: number
   borrower?: Borrower
+  recommendationOrder?: number
   file_names: string[]
 } & LoanStatusDetails
 
