@@ -142,6 +142,13 @@ export default function Marketplace() {
             </Button>
           </div>
         </div>
+        {showRecommendedOnly && (
+          <p className='text-xs text-gray-600 mt-4 px-4 text-center'>
+            ב-"בקשות מומלצות" מוצגות הבקשות שהכי דומות להיסטוריית ההשקעות שלך
+            ובעלות הלווים האמינים ביותר, מסודרות לפי רמת התאמה מהגבוה לנמוך.
+            איננו מתחייבים לתוצאות האלגוריתם.
+          </p>
+        )}
       </nav>
 
       <div className='container mx-auto py-8 px-4 flex flex-wrap'>
