@@ -1,425 +1,387 @@
-'use client'
+"use client";
 
-import type React from 'react'
+import type React from "react";
 
-import { getLoan } from '@/app/api/loans/getLoan'
-import { Loan } from '@/app/api/loans/types'
-import { ChatWidget } from '@/components/chat-widget'
-import { DocumentItem } from '@/components/document-item'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import axios from 'axios'
-import { Paperclip, Send } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { use, useEffect, useRef, useState } from 'react'
-import { getTextDirection } from '@/utils/textDirection'
+import { getLoan } from "@/app/api/loans/getLoan";
+import { Loan } from "@/app/api/loans/types";
+import { DocumentItem } from "@/components/document-item";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import axios from "axios";
+import { Send } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useRef, useState } from "react";
+import { getTextDirection } from "@/utils/textDirection";
+
+// ---- Safe status helpers (no dynamic Tailwind) ----
+type PillColor = "green" | "yellow" | "red" | "gray";
+const pillClasses = (color: PillColor) => {
+  switch (color) {
+    case "green":
+      return { text: "text-green-900", bg: "bg-green-200" };
+    case "yellow":
+      return { text: "text-yellow-900", bg: "bg-yellow-200" };
+    case "red":
+      return { text: "text-red-900", bg: "bg-red-200" };
+    default:
+      return { text: "text-gray-900", bg: "bg-gray-200" };
+  }
+};
+
+const mapStatus = (status: string) => {
+  // Known enum → Hebrew. Otherwise return raw label from server.
+  switch (status) {
+    case "PENDING_FINANCIER":
+      return "ממתין למממן";
+    case "PENDING_BORROWER":
+      return "ממתין לך";
+    case "EXPIRED":
+      return "פג תוקף";
+    case "ACCEPTED":
+      return "התקבל";
+    case "REJECTED":
+      return "נדחה";
+    default:
+      return status || "לא זמין";
+  }
+};
+
+const mapStatusColorFromEnum = (status: string): PillColor => {
+  switch (status) {
+    case "PENDING_FINANCIER":
+    case "PENDING_BORROWER":
+      return "yellow";
+    case "EXPIRED":
+    case "REJECTED":
+      return "red";
+    case "ACCEPTED":
+      return "green";
+    default:
+      return "gray";
+  }
+};
+
+const inferColorFromLabel = (label: string): PillColor => {
+  const t = label || "";
+  if (t.includes("חסר") || t.includes("ממתינ")) return "yellow";
+  if (t.includes("התקבל") || t.includes("מאושר")) return "green";
+  if (t.includes("נדחה") || t.includes("פג")) return "red";
+  return "gray";
+};
 
 export default function ApplicationDetails({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params)
+  const { id } = use(params);
+  const router = useRouter();
+  const API_BASE_URL = "http://127.0.0.1:5000";
 
-  const router = useRouter()
-  const [message, setMessage] = useState('')
-  const [offerAmount, setOfferAmount] = useState<number | ''>('')
-  const [interestRate, setInterestRate] = useState<number | ''>('')
-  const [offerTerms, setOfferTerms] = useState<string>('')
-  const [repaymentPeriod, setRepaymentPeriod] = useState<number | ''>('')
-  const [error, setError] = useState<string | null>(null)
-  const API_BASE_URL = 'http://127.0.0.1:5000' // Change if needed
-
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Enhanced messages state with more detailed structure
-  const [messages, setMessages] = useState([
-    {
-      id: '1',
-      text: 'שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.',
-      sender: 'financier',
-      timestamp: new Date(Date.now() - 3600000),
-    },
-    {
-      id: '2',
-      text: 'בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?',
-      sender: 'borrower',
-      timestamp: new Date(Date.now() - 3500000),
-    },
-    {
-      id: '3',
-      text: 'האם יש מסמכים נוספים שאפשר להעלות?',
-      sender: 'financier',
-      timestamp: new Date(Date.now() - 3400000),
-    },
-    {
-      id: '4',
-      text: 'כן, יש לנו מסמך נוסף, אנחנו נעלה אותו בקרוב.',
-      sender: 'borrower',
-      timestamp: new Date(Date.now() - 3300000),
-    },
-    {
-      id: '5',
-      text: 'תודה רבה',
-      sender: 'financier',
-      timestamp: new Date(Date.now() - 3200000),
-    },
-  ])
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages])
-
-  const [loanRequest, setLoanRequest] = useState<Loan>()
-
-
+  // ---- Loan ----
+  const [loanRequest, setLoanRequest] = useState<Loan | null>(null);
   const [documents, setDocuments] = useState([
+    { englishName: "tabo_document", name: "נסח טאבו עדכני", status: "missing" },
     {
-      englishName: 'tabo_document',
-      name: 'נסח טאבו עדכני',
-      status: 'missing',
+      englishName: "united_home_document",
+      name: "תקנון הבית המשותף",
+      status: "missing",
     },
     {
-      englishName: 'united_home_document',
-      name: 'תקנון הבית המשותף',
-      status: 'missing',
-    },
-    {
-      englishName: 'original_tama_document',
+      englishName: "original_tama_document",
       name: 'הסכם התמ"א המקורי',
-      status: 'missing',
+      status: "missing",
     },
     {
-      englishName: 'project_list_document',
-      name: 'רשימת הפרויקטים של היזם',
-      status: 'missing',
+      englishName: "project_list_document",
+      name: "רשימת הפרויקטים של היזם",
+      status: "missing",
     },
     {
-      englishName: 'company_crt_document',
-      name: 'תעודת התאגדות של החברה היזמית',
-      status: 'missing',
+      englishName: "company_crt_document",
+      name: "תעודת התאגדות של החברה היזמית",
+      status: "missing",
     },
     {
-      englishName: 'tama_addons_document',
+      englishName: "tama_addons_document",
       name: 'תוספות להסכם התמ"א',
-      status: 'missing',
+      status: "missing",
     },
     {
-      englishName: 'reject_status_document',
-      name: 'סטטוס סרבנים - פרטיהם, פירוט תביעות ופירוט פסקי דין',
-      status: 'missing',
+      englishName: "reject_status_document",
+      name: "סטטוס סרבנים",
+      status: "missing",
     },
+    { englishName: "building_permit", name: "היתר בניה", status: "missing" },
     {
-      englishName: 'building_permit',
-      name: 'היתר בניה, לרבות בקשה לקבלת היתר ותיקונים לו',
-      status: 'missing',
+      englishName: "objection_status",
+      name: "סטטוס התנגדויות",
+      status: "missing",
     },
+    { englishName: "zero_document", name: 'דו"ח אפס', status: "missing" },
     {
-      englishName: 'objection_status',
-      name: 'סטטוס התנגדויות',
-      status: 'missing',
+      englishName: "bank_account_confirm_document",
+      name: "אישור ניהול חשבון",
+      status: "missing",
     },
-    { englishName: 'zero_document', name: 'דו"ח אפס', status: 'missing' },
-    {
-      englishName: 'bank_account_confirm_document',
-      name: 'אישור ניהול חשבון',
-      status: 'missing',
-    },
-  ])
+  ]);
 
-  const fetchLoan = async () => setLoanRequest(await getLoan(id))
-
-  useEffect(() => {
-    fetchLoan()
-  }, [])
-
-  useEffect(() => {
-    if (loanRequest) {
-      const updatedDocuments = documents.map((doc) => ({
-        ...doc,
-        status: loanRequest.file_names.includes(doc.englishName)
-          ? 'uploaded'
-          : 'missing',
-      }))
-      setDocuments(updatedDocuments)
+  const fetchLoan = async () => {
+    try {
+      const data = await getLoan(id);
+      setLoanRequest(data);
+      setDocuments((prev) =>
+        prev.map((doc) => ({
+          ...doc,
+          status: data.file_names?.includes(doc.englishName)
+            ? "uploaded"
+            : "missing",
+        }))
+      );
+    } catch (err) {
+      console.error("Failed to fetch loan:", err);
     }
-  }, [loanRequest])
+  };
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    fetchLoan();
+  }, []);
 
-    if (message.trim()) {
-      // Add the new message to the chat
-      const newMessage = {
-        id: Date.now().toString(),
-        text: message,
-        sender: 'financier',
-        timestamp: new Date(),
-      }
+  // ---- Chat ----
+  const [messages, setMessages] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-      setMessages([...messages, newMessage])
-      setMessage('')
+  const getMessages = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/chat/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const list = res.data.map((m: any) => ({
+        id: m.id,
+        text: m.message,
+        sender: m.sender_role === "financier" ? "financier" : "borrower",
+        name: m.sender_name,
+        timestamp: new Date(m.sent_at),
+      }));
+      setMessages(list);
+    } catch (e) {
+      console.error("Failed to fetch messages:", e);
+    }
+  };
 
-      // Simulate a response (in a real app, this would be handled by the server)
-      setTimeout(() => {
-        const response = {
-          id: (Date.now() + 1).toString(),
-          text: 'תודה על ההודעה. אני אבדוק את זה ואחזור אליך בהקדם.',
-          sender: 'borrower',
-          timestamp: new Date(),
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+    try {
+      await axios.post(
+        `${API_BASE_URL}/chat/message/${id}`,
+        { message },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
-        setMessages((prev) => [...prev, response])
-      }, 1000)
+      );
+      setMessage("");
+      await getMessages();
+    } catch (e) {
+      console.error("Failed to send message:", e);
     }
-  }
+  };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('he-IL', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
 
+  useEffect(() => {
+    if (loanRequest) getMessages();
+  }, [loanRequest]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // ---- Document actions ----
   const handleViewDocument = (docName: string) => {
-    console.log(`Viewing document: ${docName}`)
-    // Here you would implement the document viewing logic
-    alert(`מציג מסמך: ${docName}`)
-  }
-
+    alert(`מציג מסמך: ${docName}`);
+  };
   const handleRequestDocument = (docName: string) => {
-    console.log(`Requesting document: ${docName}`)
-    // Here you would implement the document request logic
-    alert(`נשלחה בקשה למסמך: ${docName}`)
-  }
+    alert(`נשלחה בקשה למסמך: ${docName}`);
+  };
+
+  // ---- Offer form ----
+  const [offerAmount, setOfferAmount] = useState<number | "">("");
+  const [interestRate, setInterestRate] = useState<number | "">("");
+  const [offerTerms, setOfferTerms] = useState<string>("");
+  const [repaymentPeriod, setRepaymentPeriod] = useState<number | "">("");
 
   const requestMoreDocuments = () => {
-    alert('נשלחה בקשה למסמכים נוספים מהלווה.')
-  }
+    alert("נשלחה בקשה למסמכים נוספים מהלווה.");
+  };
 
   const makeAnOffer = async () => {
+    if (!loanRequest) return;
     if (
-      parseFloat(offerAmount.toString()) > loanRequest?.amount! ||
+      parseFloat(offerAmount.toString()) > loanRequest.amount ||
       parseFloat(offerAmount.toString()) < 1 ||
-      offerAmount == '' ||
-      isNaN(offerAmount)
+      offerAmount === "" ||
+      isNaN(Number(offerAmount))
     ) {
-      alert('הכנס סכום חוקי')
-      return
+      alert("הכנס סכום חוקי");
+      return;
     }
-
     if (
       parseFloat(interestRate.toString()) <= 0 ||
-      interestRate == '' ||
-      isNaN(interestRate)
+      interestRate === "" ||
+      isNaN(Number(interestRate))
     ) {
-      alert('הכנס ריבית חוקית')
-      return
+      alert("הכנס ריבית חוקית");
+      return;
     }
-
     if (
       parseFloat(repaymentPeriod.toString()) <= 0 ||
-      repaymentPeriod == '' ||
-      isNaN(repaymentPeriod)
+      repaymentPeriod === "" ||
+      isNaN(Number(repaymentPeriod))
     ) {
-      alert('הכנס תקופת החזר חוקית')
-      return
+      alert("הכנס תקופת החזר חוקית");
+      return;
     }
-
-    const token = localStorage.getItem('access_token')
 
     const offerData = {
       offer_amount: offerAmount,
       interest_rate: interestRate,
-      offer_terms: offerTerms || '',
+      offer_terms: offerTerms || "",
       repayment_period: repaymentPeriod,
       loan_id: id,
-    }
+    };
 
     try {
-      // Send the data to the server using axios
-      const response = await axios.post(
-        `${API_BASE_URL}/offer/new`,
-        offerData,
-        {
-          headers: {
-            'Content-Type': 'application/json', // Ensure the server knows we're sending JSON
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        }
-      )
-      if (response.status === 201) {
-        // Show a success alert
-        alert('ההצעה נשלחה בהצלחה!')
-        router.push('/financier/dashboard')
+      const res = await axios.post(`${API_BASE_URL}/offer/new`, offerData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (res.status === 201) {
+        alert("ההצעה נשלחה בהצלחה!");
+        router.push("/financier/dashboard");
       } else {
-        // Handle unexpected server response status
-        alert('משהו השתבש. לא ניתן לשלוח את ההצעה')
+        alert("משהו השתבש. לא ניתן לשלוח את ההצעה");
       }
-    } catch (error) {
-      // Handle errors (e.g., network issues or server errors)
-      console.error('Error sending offer:', error)
-      alert('משהו השתבש. לא ניתן לשלוח את ההצעה')
+    } catch (err) {
+      console.error("Error sending offer:", err);
+      alert("משהו השתבש. לא ניתן לשלוח את ההצעה");
     }
-  }
+  };
 
-  const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const numValue = parseFloat(value)
+  if (!loanRequest) return "Loading...";
 
-    if (numValue > 0 || value === '') {
-      setOfferAmount(numValue)
-      setError(null)
-    } else {
-      setError('סכום המימון חייב להיות גדול מ-0')
-    }
-  }
-
-  const handleInterestRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //setInterestRate(e.target.value ? parseFloat(e.target.value) : '')
-
-    const value = e.target.value
-    const numValue = parseFloat(value)
-
-    if (numValue >= 0 || value === '') {
-      setInterestRate(numValue)
-      setError(null)
-    } else {
-      setError('ריבית מוצעת חייבת להיות גדולה מ-0')
-    }
-  }
-
-  const handleRepaymentPeriodChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value
-    const numValue = parseFloat(value)
-
-    if (numValue > 0 || value === '') {
-      setRepaymentPeriod(numValue)
-      setError(null)
-    } else {
-      setError('תקופת ההחזר חייבת להיות גדולה מ-0')
-    }
-  }
-
-  const handleOfferTermsChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setOfferTerms(e.target.value)
-  }
-
-  // Initial chat messages
-  const initialMessages = [
-    {
-      id: '1',
-      text: 'שלום, אני מעוניין לקבל מידע נוסף על הפרויקט שלך.',
-      sender: 'user' as const,
-      timestamp: new Date(Date.now() - 3600000),
-    },
-    {
-      id: '2',
-      text: 'בוודאי, אשמח לענות על כל שאלה. במה אוכל לעזור?',
-      sender: 'borrower' as const,
-      timestamp: new Date(Date.now() - 3500000),
-    },
-  ]
-
-  if (!loanRequest) {
-    return 'Loading...'
-  }
+  // ---- Status pill (works for enums or Hebrew labels)
+  const statusLabel = mapStatus(loanRequest.status || "");
+  const statusColorKey: PillColor =
+    (loanRequest as any).statusColor ||
+    (loanRequest as any).status_color ||
+    mapStatusColorFromEnum(loanRequest.status || "") ||
+    inferColorFromLabel(statusLabel);
+  const statusPill = pillClasses(statusColorKey);
 
   return (
     <div>
-      <h1 className='text-3xl font-bold mb-4 text-purple-800 text-center'>
+      <h1 className="text-3xl font-bold mb-4 text-purple-800 text-center">
         פרטי בקשה #{id}
       </h1>
 
-      <Tabs defaultValue='details' className='mb-6'>
-        <TabsList className='mb-4'>
-          <TabsTrigger value='details'>פרטי בקשה</TabsTrigger>
-          <TabsTrigger value='documents'>מסמכים</TabsTrigger>
-          <TabsTrigger value='chat'>צ'אט</TabsTrigger>
+      <Tabs defaultValue="details" className="mb-6">
+        <TabsList className="mb-4">
+          <TabsTrigger value="details">פרטי בקשה</TabsTrigger>
+          <TabsTrigger value="documents">מסמכים</TabsTrigger>
+          <TabsTrigger value="chat">צ'אט</TabsTrigger>
         </TabsList>
 
-        <TabsContent value='details'>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            {/* Application Details */}
-            <Card>
+        {/* ---------- DETAILS ---------- */}
+        <TabsContent value="details">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Request details */}
+            <Card dir="rtl">
               <CardHeader>
-                <CardTitle className='text-xl text-gray-800'>
+                <CardTitle className="text-xl text-gray-800">
                   פרטי הבקשה
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='space-y-2'>
-                  <p className='text-gray-700'>
+                <div className="space-y-2 text-gray-200">
+                  <p>
                     <strong>שם חברה:</strong> {loanRequest.companyName}
                   </p>
-                  <p className='text-gray-700'>
+                  <p>
                     <strong>סוג פרויקט:</strong> {loanRequest.projectType}
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>סכום הלוואה:</strong> {loanRequest.amount.toLocaleString()}₪{' '}
+                  <p>
+                    <strong>סכום הלוואה:</strong>{" "}
+                    {Number(loanRequest.amount).toLocaleString("he-IL")}₪
                   </p>
-                  <p className='text-gray-700'>
+                  <p>
                     <strong>מיקום:</strong> {loanRequest.location}
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>זמן שעבר: </strong>
-                    {`${loanRequest.daysPassed} ימים`}
+                  <p>
+                    <strong>זמן שעבר:</strong> {loanRequest.daysPassed} ימים
                   </p>
-                  <p className='text-gray-700' dir='rtl'>
-                    <strong>סטטוס: </strong>
-                    <span className={`relative inline-block px-2 py-1 font-semibold text-${loanRequest.statusColor}-900 leading-tight text-xs ml-1`}>
+                  <p>
+                    <strong>סטטוס:</strong>{" "}
+                    <span
+                      className={`relative inline-block px-2 py-1 font-semibold leading-tight text-xs ${statusPill.text}`}
+                    >
                       <span
                         aria-hidden
-                        className={`absolute inset-0 bg-${loanRequest.statusColor}-200 opacity-50 rounded-full`}></span>
-                      <span className='relative'>{loanRequest.status}</span>
+                        className={`absolute inset-0 ${statusPill.bg} opacity-50 rounded-full`}
+                      />
+                      <span className="relative">{statusLabel}</span>
                     </span>
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Borrower Details */}
-            <Card>
+            {/* Borrower details */}
+            <Card dir="rtl">
               <CardHeader>
-                <CardTitle className='text-xl text-gray-800'>
+                <CardTitle className="text-xl text-gray-800">
                   פרטי לווה
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='space-y-2' dir="rtl">
-                  <p className='text-gray-700'>
+                <div className="space-y-2 text-gray-200">
+                  <p>
                     <strong>שם: </strong>
-                    <span 
-                      className="inline-block" 
-                      style={{ 
-                        direction: getTextDirection(loanRequest.borrower?.name || ''),
-                        unicodeBidi: 'isolate'
+                    <span
+                      className="inline-block"
+                      style={{
+                        direction: getTextDirection(
+                          loanRequest.borrower?.name || ""
+                        ),
+                        unicodeBidi: "isolate",
                       }}
                     >
                       {loanRequest.borrower?.name}
                     </span>
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>תפקיד:</strong> מנכ"ל
+                  <p>
+                    <strong>טלפון: </strong>
+                    <span dir="ltr" style={{ unicodeBidi: "bidi-override" }}>
+                      {loanRequest.borrower?.phoneNumber}
+                    </span>
                   </p>
-                  <p className='text-gray-700'>
-                    <strong>טלפון:</strong> {loanRequest.borrower?.phoneNumber}
-                  </p>
-                  <p className='text-gray-700' dir='rtl'>
-                    <strong>דוא"ל: </strong> {loanRequest.borrower?.email}
-                  </p>
-                  <p className='text-gray-700'>
-                    <strong>ניסיון קודם:</strong> 10 פרויקטים דומים
+                  <p>
+                    <strong>דוא"ל: </strong>
+                    <span dir="ltr" style={{ unicodeBidi: "bidi-override" }}>
+                      {loanRequest.borrower?.email}
+                    </span>
                   </p>
                 </div>
               </CardContent>
@@ -427,21 +389,20 @@ export default function ApplicationDetails({
           </div>
         </TabsContent>
 
-        <TabsContent value='documents'>
+        {/* ---------- DOCUMENTS ---------- */}
+        <TabsContent value="documents">
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl text-gray-800'>
-                מסמכים שהועלו
-              </CardTitle>
+              <CardTitle>מסמכים שהועלו</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                {documents.map((doc, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {documents.map((doc, i) => (
                   <DocumentItem
-                    key={index}
+                    key={i}
                     name={doc.name}
-                    status={doc.status as 'uploaded' | 'missing'}
-                    userType='financier'
+                    status={doc.status as "uploaded" | "missing"}
+                    userType="financier"
                     loanId={id}
                     englishName={doc.englishName}
                     onView={() => handleViewDocument(doc.name)}
@@ -453,94 +414,92 @@ export default function ApplicationDetails({
           </Card>
         </TabsContent>
 
-        <TabsContent value='chat'>
-          <Card className='h-[600px] flex flex-col'>
-            <CardHeader className='border-b p-0' dir='rtl'>
-              <div className='flex items-center'>
-                <Avatar
-                  style={{
-                    height: '4rem',
-                    width: '4rem',
-                  }}>
+        {/* ---------- CHAT ---------- */}
+        <TabsContent value="chat">
+          <Card className="h-[600px] flex flex-col">
+            <CardHeader className="border-b p-2" dir="rtl">
+              <div className="flex items-center">
+                <Avatar style={{ height: "4rem", width: "4rem" }}>
                   <AvatarImage
-                    src='/borrower.png'
-                    alt={loanRequest.borrower?.name}
+                    src="/borrower.png"
+                    alt={loanRequest.borrower?.name || "borrower"}
                   />
-                  <AvatarFallback className='bg-purple-100 text-purple-800'>
-                    {loanRequest.borrower?.name.substring(0, 2)}
+                  <AvatarFallback className="bg-purple-100 text-purple-800">
+                    {loanRequest.borrower?.name?.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className='text-xl text-gray-800'>
-                    {loanRequest.borrower?.name}
-                  </CardTitle>
-                  <p className='text-sm text-gray-500'>
+                  <CardTitle>{loanRequest.borrower?.name}</CardTitle>
+                  <p className="text-sm text-gray-500">
                     {loanRequest.companyName}
                   </p>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className='flex-1 overflow-y-auto p-4'>
-              <div className='space-y-4'>
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${
-                      msg.sender === 'financier'
-                        ? 'justify-end'
-                        : 'justify-start'
-                    }`}>
+            <CardContent className="flex-1 overflow-y-auto p-4">
+              {messages.length === 0 ? (
+                <p className="text-gray-500 text-center">אין הודעות עדיין</p>
+              ) : (
+                <div className="space-y-4">
+                  {messages.map((msg) => (
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
-                        msg.sender === 'financier'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                      <div className='text-sm' dir='rtl'>
-                        {msg.text}
-                      </div>
+                      key={msg.id}
+                      className={`flex ${
+                        msg.sender === "financier"
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
+                    >
                       <div
-                        className={`text-xs mt-1 ${
-                          msg.sender === 'financier'
-                            ? 'text-purple-200'
-                            : 'text-gray-500'
-                        }`}>
-                        {formatTime(msg.timestamp)}
+                        className={`max-w-[80%] rounded-lg p-3 ${
+                          msg.sender === "financier"
+                            ? "bg-purple-600 text-white"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        <div className="text-xs font-semibold mb-1">
+                          {msg.name}
+                        </div>
+                        <div className="text-sm" dir="rtl">
+                          {msg.text}
+                        </div>
+                        <div
+                          className={`text-xs mt-1 ${
+                            msg.sender === "financier"
+                              ? "text-purple-200"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {formatTime(msg.timestamp)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
             </CardContent>
 
-            <div className='p-4 border-t'>
+            <div className="p-4 border-t">
               <form
                 onSubmit={handleSendMessage}
-                className='flex items-center space-x-2 space-x-reverse'>
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='rounded-full mr-2'>
-                  <Paperclip className='h-5 w-5' />
-                  <span className='sr-only'>צרף קובץ</span>
-                </Button>
+                className="flex items-center space-x-2 space-x-reverse"
+              >
                 <Input
-                  type='text'
-                  dir='rtl'
-                  placeholder='הקלד הודעה...'
+                  type="text"
+                  dir="rtl"
+                  placeholder="הקלד הודעה..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className='flex-1'
+                  className="flex-1"
                 />
                 <Button
-                  type='submit'
-                  size='icon'
-                  className='rounded-full bg-purple-600 pt-0.5 pr-0.5'>
-                  <Send className='h-5 w-5' />
-                  <span className='sr-only'>שלח</span>
+                  type="submit"
+                  size="icon"
+                  className="rounded-full bg-purple-600"
+                >
+                  <Send className="h-5 w-5" />
                 </Button>
               </form>
             </div>
@@ -548,107 +507,105 @@ export default function ApplicationDetails({
         </TabsContent>
       </Tabs>
 
-      {/* Offer Form */}
-      <Card className='mb-6'>
+      {/* ---------- OFFER FORM (with spacing) ---------- */}
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle className='text-xl text-gray-800'>
+          <CardTitle className="text-xl text-gray-800">
             הגש הצעת מימון
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-4'>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2'
-                htmlFor='offerAmount'>
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="offerAmount"
+              >
                 סכום המימון המוצע:
               </label>
               <Input
-                id='offerAmount'
-                type='number'
+                id="offerAmount"
+                type="number"
                 value={offerAmount}
-                onChange={handleOfferAmountChange}
-                placeholder='הכנס סכום'
-                className='mb-4'
+                onChange={(e) => setOfferAmount(parseFloat(e.target.value))}
+                placeholder="הכנס סכום"
               />
             </div>
+
             <div>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2'
-                htmlFor='interestRate'>
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="interestRate"
+              >
                 ריבית מוצעת (%):
               </label>
               <Input
-                id='interestRate'
-                type='number'
+                id="interestRate"
+                type="number"
                 value={interestRate}
-                onChange={handleInterestRateChange}
-                step='0.1'
-                placeholder='הכנס אחוז ריבית'
-                className='mb-4'
+                onChange={(e) => setInterestRate(parseFloat(e.target.value))}
+                step="0.1"
+                placeholder="הכנס אחוז ריבית"
               />
             </div>
+
             <div>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2'
-                htmlFor='repaymentPeriod'>
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="repaymentPeriod"
+              >
                 תקופת החזר (חודשים):
               </label>
               <Input
-                id='repaymentPeriod'
-                type='number'
+                id="repaymentPeriod"
+                type="number"
                 value={repaymentPeriod}
-                onChange={handleRepaymentPeriodChange}
-                placeholder='הכנס תקופה (בחודשים)'
-                className='mb-4'
+                onChange={(e) => setRepaymentPeriod(parseFloat(e.target.value))}
+                placeholder="הכנס תקופה (בחודשים)"
               />
             </div>
           </div>
-          <div className='mb-4'>
+
+          <div className="mb-4">
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='offerTerms'>
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="offerTerms"
+            >
               תנאים נוספים:
             </label>
             <Textarea
-              id='offerTerms'
+              id="offerTerms"
               value={offerTerms}
-              onChange={handleOfferTermsChange}
-              placeholder='פרט תנאים נוספים להצעה'
+              onChange={(e) => setOfferTerms(e.target.value)}
+              placeholder="פרט תנאים נוספים להצעה"
               rows={4}
             />
           </div>
         </CardContent>
       </Card>
 
-      {/* Actions */}
-      <div className='flex justify-center gap-4'>
+      {/* ---------- ACTIONS ---------- */}
+      <div className="flex justify-center gap-4">
         <Button
-          variant='outline'
-          className='bg-yellow-400 hover:bg-yellow-600 text-white'
-          onClick={requestMoreDocuments}>
+          variant="outline"
+          className="bg-yellow-400 hover:bg-yellow-600 text-white"
+          onClick={requestMoreDocuments}
+        >
           בקש מסמכים נוספים
         </Button>
-
         <Button
-          className='bg-green-500 hover:bg-green-700 text-white'
-          onClick={makeAnOffer}>
+          className="bg-green-500 hover:bg-green-700 text-white"
+          onClick={makeAnOffer}
+        >
           שלח הצעה
         </Button>
-
         <Button
-          variant='outline'
-          onClick={() => router.push('/financier/marketplace')}>
+          variant="outline"
+          onClick={() => router.push("/financier/marketplace")}
+        >
           חזור לרשימה
         </Button>
       </div>
-
-      {/* Chat Widget (floating) */}
-      <ChatWidget
-        borrowerName={loanRequest.borrower?.name!}
-        borrowerId={loanRequest.borrower?.id!}
-        initialMessages={initialMessages}
-      />
     </div>
-  )
+  );
 }
