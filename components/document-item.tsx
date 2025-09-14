@@ -31,6 +31,8 @@ export function DocumentItem({
   onRequest,
 }: DocumentItemProps) {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
   // Local fallback toast when the app toast isn't working
   const [localToast, setLocalToast] = useState<{
     title: string;
@@ -66,6 +68,8 @@ export function DocumentItem({
     description?: string;
     variant?: "default" | "destructive";
   }) => {
+    // remove loading when showing toast so toast replaces loading UI
+    setLoading(false);
     // Always show the local fallback immediately so the user always sees feedback
     showLocalToast(opts);
     // Then try the app toast (best-effort)
@@ -82,6 +86,7 @@ export function DocumentItem({
       e.preventDefault();
 
       try {
+        setLoading(true);
         const backendUrl = `${API_BASE_URL}/file/download_file?loan_id=${encodeURIComponent(
           loanId
         )}&file_basename=${encodeURIComponent(englishName)}`;
@@ -109,6 +114,8 @@ export function DocumentItem({
         window.URL.revokeObjectURL(url);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
   const handleRequestDocument = (e: React.MouseEvent) => {
@@ -126,6 +133,7 @@ export function DocumentItem({
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
+        setLoading(true);
         const fileExtension = file.name.split(".").pop(); // Get original file extension
         const newFileName = `${englishName}.${fileExtension}`; // Rename file using key name
         const renamedFile = new File([file], newFileName, {
@@ -179,6 +187,8 @@ export function DocumentItem({
             description: "Network error while uploading file.",
             variant: "destructive",
           });
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -194,6 +204,7 @@ export function DocumentItem({
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
+        setLoading(true);
         const fileExtension = file.name.split(".").pop(); // Get original file extension
         const newFileName = `${englishName}.${fileExtension}`; // Rename file using key name
         const renamedFile = new File([file], newFileName, {
@@ -247,6 +258,8 @@ export function DocumentItem({
             description: "Network error while uploading file.",
             variant: "destructive",
           });
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -255,6 +268,15 @@ export function DocumentItem({
 
   return (
     <>
+      {/* Loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-md p-4 flex items-center gap-3 shadow">
+            <div className="w-6 h-6 border-4 border-t-transparent border-purple-600 rounded-full animate-spin" />
+            <div className="font-medium">Processing…</div>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center p-2 border-b">
         <div className="flex gap-2 justify-end">
           {status === "uploaded" ? (

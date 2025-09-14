@@ -110,8 +110,15 @@ export default function NewLoanRequest() {
     additionalDocs: null,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const { toast } = useToast();
   const { localToast, showToast, clearLocalToast } = useLocalToast(toast);
+  // wrapper so any toast will also remove loading overlay
+  const showAppToast = (opts: Parameters<typeof showToast>[0]) => {
+    setLoading(false);
+    showToast(opts);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -135,6 +142,7 @@ export default function NewLoanRequest() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // Step 1: Create the loan
       const loanResponse = await fetch(`${API_BASE_URL}/loans`, {
@@ -154,7 +162,7 @@ export default function NewLoanRequest() {
       if (!loanResponse.ok) {
         const err = await loanResponse.json().catch(() => ({}));
         console.error("Failed to create loan", err);
-        showToast({
+        showAppToast({
           title: "Failed to create loan",
           description:
             err?.error ||
@@ -213,7 +221,7 @@ export default function NewLoanRequest() {
               // collect them and show combined popup after submission
               unacceptedFiles = unaccepted_files;
             } else {
-              showToast({
+              showAppToast({
                 title: "Upload failed",
                 description:
                   data?.error || "Error uploading files. Please try again.",
@@ -224,7 +232,7 @@ export default function NewLoanRequest() {
           }
         } catch (err) {
           console.error("Upload error:", err);
-          showToast({
+          showAppToast({
             title: "Upload failed",
             description: "Network error while uploading files.",
             variant: "destructive",
@@ -236,7 +244,7 @@ export default function NewLoanRequest() {
       // Step 3: Success - notify and redirect
       if (unacceptedFiles.length > 0) {
         // sticky toast with Continue button; user can always upload files later
-        showToast({
+        showAppToast({
           title: "Request submitted",
           description: `Request submitted. Some files were not accepted:${
             "\n" + unacceptedFiles.join(",\n")
@@ -250,7 +258,7 @@ You can always upload them later from the loan page.`,
         });
         // do NOT auto-redirect; user must press Continue
       } else {
-        showToast({
+        showAppToast({
           title: "Request submitted",
           description: "Your loan request was submitted successfully.",
           variant: "success",
@@ -260,11 +268,14 @@ You can always upload them later from the loan page.`,
       }
     } catch (error) {
       console.error("Error submitting loan request:", error);
-      showToast({
+      showAppToast({
         title: "Submission failed",
         description: "Unexpected error while submitting request.",
         variant: "destructive",
       });
+    } finally {
+      // ensure loading cleared after the flow
+      setLoading(false);
     }
   };
 
@@ -649,6 +660,16 @@ You can always upload them later from the loan page.`,
                 </Button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-md p-4 flex items-center gap-3 shadow">
+            <div className="w-8 h-8 border-4 border-t-transparent border-purple-600 rounded-full animate-spin" />
+            <div className="font-medium">Processing…</div>
           </div>
         </div>
       )}
