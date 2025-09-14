@@ -17,6 +17,10 @@ import { Paperclip, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useRef, useState } from "react";
 import { getTextDirection } from "@/utils/textDirection";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { updateLoanStatus } from "@/app/api/loans/updateLoanStatus";
+import { backendToDisplayStatus, displayToBackendStatus, type BackendLoanStatus } from "@/app/api/loans/statusMap";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ApplicationDetails({
   params,
@@ -33,6 +37,9 @@ export default function ApplicationDetails({
   const [error, setError] = useState<string | null>(null);
 
   const [loanRequest, setLoanRequest] = useState<Loan>();
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [selectedBackendStatus, setSelectedBackendStatus] = useState<BackendLoanStatus | undefined>(undefined);
+  const { toast } = useToast();
 
   const [documents, setDocuments] = useState([
     {
@@ -105,6 +112,42 @@ export default function ApplicationDetails({
       setDocuments(updatedDocuments);
     }
   }, [loanRequest]);
+
+  const handleStatusChange = async () => {
+    if (!selectedBackendStatus || !loanRequest) return;
+    console.log('🔍 Debug - Selected status from dropdown:', selectedBackendStatus);
+    console.log('🔍 Debug - Type of selected status:', typeof selectedBackendStatus);
+    setIsUpdatingStatus(true);
+    const previousStatus = loanRequest.status;
+    try {
+      const resp = await updateLoanStatus(id, selectedBackendStatus);
+      await fetchLoan();
+      const emailsOk = resp.borrower_email_sent && resp.financier_email_sent;
+      toast({
+        title: emailsOk ? "הסטטוס עודכן ונשלחו מיילים" : "הסטטוס עודכן",
+        description: `ללווה: ${resp.borrower_email_sent ? 'נשלח' : 'לא נשלח'}, למממן: ${resp.financier_email_sent ? 'נשלח' : 'לא נשלח'}`,
+      });
+      setSelectedBackendStatus(undefined);
+    } catch (e: any) {
+      let description = e.message || "נסה שוב מאוחר יותר";
+      
+      // Try to fetch the latest loan to see if status actually changed despite error
+      try {
+        const latest = await getLoan(id);
+        setLoanRequest(latest);
+        if (latest.status !== previousStatus) {
+          description = `הסטטוס עודכן אך אירעה שגיאה בשליחת מיילים. ${e.message ?? ''}`.trim();
+          toast({ title: "עודכן עם אזהרה", description });
+          setSelectedBackendStatus(undefined);
+          return;
+        }
+      } catch {}
+      
+      toast({ title: "שגיאה בעדכון סטטוס", description });
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   // ---- Chat ----
   const [messages, setMessages] = useState<any[]>([]);
@@ -250,9 +293,13 @@ export default function ApplicationDetails({
 
   const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    if (value === "") {
+      setOfferAmount("");
+      setError(null);
+      return;
+    }
     const numValue = parseFloat(value);
-
-    if (numValue > 0 || value === "") {
+    if (!isNaN(numValue) && numValue > 0) {
       setOfferAmount(numValue);
       setError(null);
     } else {
@@ -261,12 +308,14 @@ export default function ApplicationDetails({
   };
 
   const handleInterestRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //setInterestRate(e.target.value ? parseFloat(e.target.value) : '')
-
     const value = e.target.value;
+    if (value === "") {
+      setInterestRate("");
+      setError(null);
+      return;
+    }
     const numValue = parseFloat(value);
-
-    if (numValue >= 0 || value === "") {
+    if (!isNaN(numValue) && numValue >= 0) {
       setInterestRate(numValue);
       setError(null);
     } else {
@@ -278,9 +327,13 @@ export default function ApplicationDetails({
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
+    if (value === "") {
+      setRepaymentPeriod("");
+      setError(null);
+      return;
+    }
     const numValue = parseFloat(value);
-
-    if (numValue > 0 || value === "") {
+    if (!isNaN(numValue) && numValue > 0) {
       setRepaymentPeriod(numValue);
       setError(null);
     } else {
@@ -367,6 +420,30 @@ export default function ApplicationDetails({
                       <span className="relative">{loanRequest.status}</span>
                     </span>
                   </p>
+                  <div className="flex items-center gap-2" dir="rtl">
+                    <div className="w-56">
+                      <Select
+                        value={selectedBackendStatus}
+                        onValueChange={(val) => setSelectedBackendStatus(val as BackendLoanStatus)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="בחר סטטוס חדש" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PROCESSING_DOCUMENTS">מעבד מסמכים</SelectItem>
+                          <SelectItem value="MISSING_DOCUMENTS">חסרים מסמכים</SelectItem>
+                          <SelectItem value="PENDING_OFFERS">הצעות ממתינות</SelectItem>
+                          <SelectItem value="WAITING_FOR_OFFERS">ממתין להצעות</SelectItem>
+                          <SelectItem value="ACTIVE_LOAN">הלוואה פעילה</SelectItem>
+                          <SelectItem value="PAID">הושלם</SelectItem>
+                          <SelectItem value="EXPIRED">פג תוקף</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button onClick={handleStatusChange} disabled={!selectedBackendStatus || isUpdatingStatus}>
+                      {isUpdatingStatus ? 'מעדכן...' : 'עדכן סטטוס'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

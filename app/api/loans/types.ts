@@ -3,7 +3,7 @@ export enum LoanStatus {
   MISSING_DOCUMENTS = 'חסרים מסמכים',
   PENDING_OFFERS = 'הצעות ממתינות',
   WAITING_FOR_OFFERS = 'ממתין להצעות',
-  ACTTVE_LOAN = 'הלוואה פעילה',
+  ACTIVE_LOAN = 'הלוואה פעילה',
   PAID = 'הושלם',
   EXPIRED = 'פג תוקף',
 }
@@ -59,7 +59,7 @@ export const getLoanStatusDetails = (
       progress: 50,
     },
     {
-      status: LoanStatus.ACTTVE_LOAN,
+      status: LoanStatus.ACTIVE_LOAN,
       statusColor: 'green',
       progress: 90,
     },
